@@ -19,6 +19,13 @@ jobs:
         with:
           node-version: '18'
 
+      # Android বিল্ডের জন্য Java সেটআপ করা আবশ্যক
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
       - name: Install Dependencies
         run: npm install
 
@@ -28,9 +35,6 @@ jobs:
       - name: Add Android Platform
         run: npx cap add android
 
-      - name: Sync Capacitor Android
-        run: npx cap sync android
-        
       - name: Sync Capacitor Android
         run: npx cap sync android
 
