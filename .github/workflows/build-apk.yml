@@ -3,7 +3,8 @@ name: Build BIVAS Salary Manager APK
 on:
 workflow_dispatch:
 push:
-branches: [ main ]
+branches:
+- main
 
 permissions:
 contents: read
