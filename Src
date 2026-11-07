@@ -1,0 +1,155 @@
+import React, { useState, useEffect } from 'react';
+
+const SalaryTracker = () => {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [dailyData, setDailyData] = useState({});
+  const standardWorkMinutes = 8 * 60 + 30; // ৮ ঘণ্টা ৩০ মিনিট (প্রয়োজন অনুযায়ী পরিবর্তন করতে পারেন)
+
+  // নির্বাচিত মাস এবং বছরের উপর ভিত্তি করে ডেটা লোড করা
+  useEffect(() => {
+    const monthKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}`;
+    const savedData = localStorage.getItem(`salaryData_${monthKey}`);
+    if (savedData) {
+      setDailyData(JSON.parse(savedData));
+    } else {
+      setDailyData({});
+    }
+  }, [currentDate]);
+
+  // ডেটা সেভ করা
+  const saveData = (newData) => {
+    const monthKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}`;
+    localStorage.setItem(`salaryData_${monthKey}`, JSON.stringify(newData));
+    setDailyData(newData);
+  };
+
+  // সময় ক্যালকুলেশন (ঘণ্টা এবং মিনিট)
+  const calculateTime = (inTime, outTime) => {
+    if (!inTime || !outTime) return { total: '0 : 0', regular: '0 : 0', ot: '0 : 0' };
+
+    const [inH, inM] = inTime.split(':').map(Number);
+    const [outH, outM] = outTime.split(':').map(Number);
+
+    let totalMinutes = (outH * 60 + outM) - (inH * 60 + inM);
+    if (totalMinutes < 0) totalMinutes += 24 * 60; // যদি নাইট শিফট হয়
+
+    let regularMinutes = Math.min(totalMinutes, standardWorkMinutes);
+    let otMinutes = Math.max(0, totalMinutes - standardWorkMinutes);
+
+    const formatHM = (mins) => `${Math.floor(mins / 60)} : ${mins % 60}`;
+
+    return {
+      total: formatHM(totalMinutes),
+      regular: formatHM(regularMinutes),
+      ot: formatHM(otMinutes)
+    };
+  };
+
+  // ইনপুট পরিবর্তন হ্যান্ডলার
+  const handleInputChange = (day, field, value) => {
+    const newData = { ...dailyData };
+    if (!newData[day]) newData[day] = { inTime: '', outTime: '', type: 'Regular' };
+    
+    newData[day][field] = value;
+    
+    const times = calculateTime(newData[day].inTime, newData[day].outTime);
+    newData[day].totalHours = times.total;
+    newData[day].regularHours = times.regular;
+    newData[day].otHours = times.ot;
+
+    saveData(newData);
+  };
+
+  // মাস পরিবর্তন হ্যান্ডলার
+  const changeMonth = (offset) => {
+    const newDate = new Date(currentDate.setMonth(currentDate.getMonth() + offset));
+    setCurrentDate(new Date(newDate));
+  };
+
+  // মাসের দিনগুলো তৈরি করা
+  const getDaysInMonth = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  };
+
+  return (
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        {/* Header and Controls */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Salary & OT Tracker</h1>
+          <div className="flex space-x-4 items-center">
+            <button onClick={() => changeMonth(-1)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Previous Month</button>
+            <span className="text-lg font-semibold">
+              {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
+            </span>
+            <button onClick={() => changeMonth(1)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Next Month</button>
+          </div>
+        </div>
+
+        {/* Data Table */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse border border-gray-300">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border border-gray-300 p-2">Date</th>
+                <th className="border border-gray-300 p-2">Working Type</th>
+                <th className="border border-gray-300 p-2">In Time</th>
+                <th className="border border-gray-300 p-2">Out Time</th>
+                <th className="border border-gray-300 p-2">Total Hours</th>
+                <th className="border border-gray-300 p-2">Regular Hours</th>
+                <th className="border border-gray-300 p-2">OT Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              {getDaysInMonth().map(day => {
+                const data = dailyData[day] || { inTime: '', outTime: '', type: 'Regular', totalHours: '0 : 0', regularHours: '0 : 0', otHours: '0 : 0' };
+                const dateStr = `${day.toString().padStart(2, '0')}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getFullYear()}`;
+                
+                return (
+                  <tr key={day} className="hover:bg-gray-50 text-center">
+                    <td className="border border-gray-300 p-2">{dateStr}</td>
+                    <td className="border border-gray-300 p-2">
+                      <select 
+                        value={data.type} 
+                        onChange={(e) => handleInputChange(day, 'type', e.target.value)}
+                        className="p-1 border rounded w-full"
+                      >
+                        <option>Regular</option>
+                        <option>Holiday</option>
+                        <option>Leave</option>
+                      </select>
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input 
+                        type="time" 
+                        value={data.inTime} 
+                        onChange={(e) => handleInputChange(day, 'inTime', e.target.value)}
+                        className="p-1 border rounded w-full"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input 
+                        type="time" 
+                        value={data. outTime} 
+                        onChange={(e) => handleInputChange(day, 'outTime', e.target.value)}
+                        className="p-1 border rounded w-full"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2 font-semibold">{data.totalHours}</td>
+                    <td className="border border-gray-300 p-2 text-green-600">{data.regularHours}</td>
+                    <td className="border border-gray-300 p-2 text-red-600 font-bold">{data.otHours}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SalaryTracker;
