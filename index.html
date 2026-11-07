@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; margin: 0; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        label { font-weight: bold; margin-top: 15px; display: block; color: #555; }
+        input { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        .time-group { display: flex; gap: 10px; align-items: center; }
+        .time-group input { margin-bottom: 0; }
+        button { background-color: #28a745; color: white; border: none; padding: 12px; cursor: pointer; border-radius: 4px; width: 100%; font-size: 16px; margin-top: 15px; font-weight: bold; }
+        button.btn-small { width: auto; background-color: #007bff; padding: 10px; font-size: 14px; margin-top: 0; white-space: nowrap; }
+        button:hover { opacity: 0.9; }
+        table { width: 100%; margin-top: 25px; border-collapse: collapse; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #007bff; color: white; }
+        .export-btn { background-color: #ffc107; color: black; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>ইন/আউট টাইম ট্র্যাকার</h2>
+    
+    <label>কর্মীর নাম:</label>
+    <input type="text" id="empName" placeholder="নাম লিখুন">
+
+    <label>তারিখ:</label>
+    <input type="date" id="date">
+
+    <label>ইন টাইম (In Time):</label>
+    <div class="time-group">
+        <input type="time" id="inTime">
+        <button class="btn-small" onclick="setCurrentTime('inTime')">এখনকার সময়</button>
+    </div>
+
+    <label style="margin-top: 15px;">আউট টাইম (Out Time):</label>
+    <div class="time-group">
+        <input type="time" id="outTime">
+        <button class="btn-small" onclick="setCurrentTime('outTime')">এখনকার সময়</button>
+    </div>
+
+    <button onclick="saveData()">সেভ করুন</button>
+
+    <h3 style="margin-top: 30px; text-align: center;">আজকের রেকর্ড</h3>
+    <table id="recordTable">
+        <thead>
+            <tr>
+                <th>নাম</th>
+                <th>ইন টাইম</th>
+                <th>আউট টাইম</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will appear here -->
+        </tbody>
+    </table>
+
+    <button class="export-btn" onclick="exportToCSV()">Excel (CSV) ডাউনলোড করুন</button>
+</div>
+
+<script>
+    // Set today's date automatically
+    document.getElementById('date').valueAsDate = new Date();
+
+    // Function to set current time in the input field (allows manual edit later)
+    function setCurrentTime(elementId) {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById(elementId).value = `${hours}:${minutes}`;
+    }
+
+    // Load saved data from browser's Local Storage
+    let records = JSON.parse(localStorage.getItem('attendanceData')) || [];
+    renderTable();
+
+    // Save Data
+    function saveData() {
+        const name = document.getElementById('empName').value;
+        const date = document.getElementById('date').value;
+        const inTime = document.getElementById('inTime').value;
+        const outTime = document.getElementById('outTime').value;
+
+        if(!name) {
+            alert("অনুগ্রহ করে কর্মীর নাম লিখুন!");
+            return;
+        }
+
+        const record = { name, date, inTime, outTime };
+        records.push(record);
+        localStorage.setItem('attendanceData', JSON.stringify(records));
+        
+        // Reset fields for the next entry
+        document.getElementById('empName').value = '';
+        document.getElementById('inTime').value = '';
+        document.getElementById('outTime').value = '';
+
+        renderTable();
+    }
+
+    // Render Table
+    function renderTable() {
+        const tbody = document.querySelector('#recordTable tbody');
+        tbody.innerHTML = '';
+        records.forEach(rec => {
+            const row = `<tr>
+                <td>${rec.name}</td>
+                <td>${rec.inTime || '-'}</td>
+                <td>${rec.outTime || '-'}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Export to CSV (For Payroll Excel integration)
+    function exportToCSV() {
+        let csvContent = "data:text/csv;charset=utf-8,Name,Date,In Time,Out Time\n";
+        records.forEach(rec => {
+            let row = `${rec.name},${rec.date},${rec.inTime},${rec.outTime}`;
+            csvContent += row + "\n";
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "attendance_data.csv");
+        document.body.appendChild(link);
+        link.click();
+    }
+</script>
+
+</body>
+</html>
