@@ -1,36 +1,45 @@
 name: Build BIVAS Salary Manager APK
+
 on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
+workflow_dispatch:
+push:
+branches: [ main ]
+
 permissions:
-  contents: read
+contents: read
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Extract Android project ZIP
-        run: |
-          test -f BIVAS_SALARY_MANAGER_FIXED_v2.zip
-          unzip -o BIVAS_SALARY_MANAGER_FIXED_v2.zip -d .
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-      - name: Install Android SDK packages
-        run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
-      - name: Build debug APK
-        run: gradle --no-daemon assembleDebug
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name
+build:
+runs-on: ubuntu-latest
+
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+
+  - name: Set up JDK 17
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '17'
+
+  - name: Set up Android SDK
+    uses: android-actions/setup-android@v3
+
+  - name: Extract Android project ZIP
+    run: |
+      unzip -o BIVAS_SALARY_MANAGER_FIXED_v2.zip -d android-project
+
+  - name: Find Gradle project
+    run: |
+      find android-project -name settings.gradle -o -name settings.gradle.kts
+
+  - name: Build APK
+    run: |
+      cd android-project
+      gradle assembleDebug
+
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: BIVAS-Salary-Manager-APK
+      path: android-project/**/build/outputs/apk/debug/*.apk
