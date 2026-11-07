@@ -3,53 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salary & Attendance Tracker</title>
+    <title>অ্যাটেনডেন্স ও স্যালারি ট্র্যাকার</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f7f6; text-align: center; }
-        .container { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        button { padding: 12px 24px; font-size: 16px; margin: 10px; cursor: pointer; border: none; border-radius: 5px; color: white; }
-        .btn-in { background-color: #28a745; }
-        .btn-out { background-color: #dc3545; }
-        .btn-export { background-color: #007bff; display: block; width: 100%; margin-top: 20px; }
-        #history { margin-top: 20px; text-align: left; max-height: 300px; overflow-y: auto; }
-        .record-item { background: #eee; margin: 5px 0; padding: 10px; border-radius: 5px; font-size: 14px; }
+        body { 
+            font-family: sans-serif; 
+            background-color: #f3f4f6; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+        }
+        .card { 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            text-align: center; 
+            width: 90%; 
+            max-width: 400px; 
+        }
+        h2 { 
+            color: #111827; 
+            margin-bottom: 40px; 
+            font-size: 24px; 
+            font-weight: bold; 
+        }
+        h3 { 
+            color: #111827; 
+            margin-bottom: 20px; 
+            font-size: 20px; 
+            font-weight: bold; 
+            text-align: left; 
+        }
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            font-size: 18px; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+        }
+        .btn-in { background-color: #4caf50; }
+        .btn-in:disabled { background-color: #a5d6a7; cursor: not-allowed; }
+        
+        .btn-out { background-color: #f44336; }
+        .btn-out:disabled { background-color: #ef9a9a; cursor: not-allowed; }
+        
+        .btn-csv { background-color: #007bff; margin-bottom: 0; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>অ্যাটেনডেন্স ও স্যালারি ট্র্যাকার</h2>
-        
-        <button class="btn-in" onclick="recordTime('Punch In')">Punch In (প্রবেশ)</button>
-        <button class="btn-out" onclick="recordTime('Punch Out')">Punch Out (প্রস্থান)</button>
-        
-        <h3 style="text-align: left; margin-top: 30px;">পুরোনো রেকর্ড:</h3>
-        <div id="history"></div>
 
-        <button class="btn-export" onclick="exportCSV()">CSV ডাউনলোড করুন</button>
+<div class="card">
+    <h2>অ্যাটেনডেন্স ও স্যালারি<br>ট্র্যাকার</h2>
+
+    <button id="btnIn" class="btn-in" onclick="handlePunchIn()">Punch In (প্রবেশ)</button>
+    <button id="btnOut" class="btn-out" onclick="handlePunchOut()" disabled>Punch Out (প্রস্থান)</button>
+
+    <div style="text-align: left; margin-top: 40px;">
+        <h3>পুরোনো রেকর্ড:</h3>
+        <button class="btn-csv" onclick="downloadCSV()">CSV ডাউনলোড করুন</button>
     </div>
+</div>
 
-    <script>
-        function recordTime(type) {
-            const now = new Date();
-            const timeString = now.toLocaleString('en-IN');
-            let records = JSON.parse(localStorage.getItem('salaryTrackerRecords')) || [];
-            
-            records.push({ type: type, time: timeString });
-            localStorage.setItem('salaryTrackerRecords', JSON.stringify(records));
-            displayHistory();
+<script>
+    let isPunchedIn = false;
+    let punchInTime = null;
+    let records = JSON.parse(localStorage.getItem('salaryRecords')) || [];
+
+    // অ্যাপ খোলার সময় আগের ডেটা চেক করা
+    window.onload = function() {
+        const savedPunchIn = localStorage.getItem('punchInTime');
+        if (savedPunchIn) {
+            isPunchedIn = true;
+            punchInTime = new Date(savedPunchIn);
+            updateButtons();
+        }
+    };
+
+    // বাটন অন/অফ করার ফাংশন
+    function updateButtons() {
+        document.getElementById('btnIn').disabled = isPunchedIn;
+        document.getElementById('btnOut').disabled = !isPunchedIn;
+    }
+
+    // Punch In ফাংশন
+    function handlePunchIn() {
+        const now = new Date();
+        punchInTime = now;
+        isPunchedIn = true;
+        localStorage.setItem('punchInTime', now.toISOString());
+        updateButtons();
+        alert("Punch In সফল হয়েছে!");
+    }
+
+    // Punch Out ফাংশন (৮.৫ ঘণ্টার ওভারটাইম হিসাব সহ)
+    function handlePunchOut() {
+        if (!isPunchedIn || !punchInTime) return;
+        
+        const now = new Date();
+        const diffMs = now - new Date(punchInTime);
+        const diffHrs = diffMs / (1000 * 60 * 60);
+
+        const standardHrs = 8.5;
+        let regularHrs = diffHrs;
+        let overtimeHrs = 0;
+
+        if (diffHrs > standardHrs) {
+            regularHrs = standardHrs;
+            overtimeHrs = diffHrs - standardHrs;
         }
 
-        function displayHistory() {
-            let records = JSON.parse(localStorage.getItem('salaryTrackerRecords')) || [];
-            let historyDiv = document.getElementById('history');
-            historyDiv.innerHTML = '';
-            
-            // Show latest records first
-            records.slice().reverse().forEach(r => {
-                let div = document.createElement('div');
-                div.className = 'record-item';
-                div.innerHTML = `<b>${r.type}</b>: ${r.time}`;
-                historyDiv.appendChild(div);
-            });
-        }
+        const newRecord = {
+            date: now.toLocaleDateString('bn-IN'),
+            inTime: new Date(punchInTime).toLocaleTimeString('bn-IN'),
+            outTime: now.toLocaleTimeString('bn-IN'),
+            totalHours: diffHrs.toFixed(2),
+            regularHours: regularHrs.toFixed(2),
+            overtimeHours: overtimeHrs.toFixed(2)
+        };
 
+        records.push(newRecord);
+        localStorage.setItem('salaryRecords', JSON.stringify(records));
+
+        isPunchedIn = false;
+        punchInTime = null;
+        localStorage.removeItem('punchInTime');
+        updateButtons();
+        alert("Punch Out সফল হয়েছে! ডেটা সেভ করা হয়েছে।");
+    }
+
+    // CSV ডাউনলোড ফাংশন
+    function downloadCSV() {
+        if (records.length === 0) {
+            alert("ডাউনলোড করার মতো কোনো রেকর্ড নেই!");
+            return;
+        }
+        
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "তারিখ,প্রবেশের সময়,প্রস্থানের সময়,মোট ঘণ্টা,সাধারণ ডিউটি,ওভারটাইম\n";
+        
+        records.forEach(row => {
+            csvContent += `${row.date},${row.inTime},${row.outTime},${row.totalHours},${row.regularHours},${row.overtimeHours}\n`;
+        });
+        
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Salary_Records.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+</html>
