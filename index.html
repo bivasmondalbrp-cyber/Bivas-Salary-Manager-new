@@ -1,277 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Salary Manager</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 10px; background-color: #f4f4f9; }
-        h2 { text-align: center; color: #003366; }
-        .container { display: flex; flex-wrap: wrap; gap: 20px; }
-        .table-container { flex: 1 1 60%; overflow-x: auto; }
-        .summary-container { flex: 1 1 30%; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); height: fit-content; }
-        
-        table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 20px; font-size: 14px; }
-        th, td { border: 1px solid #444; padding: 8px; text-align: center; }
-        th { background-color: #003366; color: white; position: sticky; top: 0; }
-        
-        input, select { width: 90%; padding: 4px; border: 1px solid #ccc; text-align: center; }
-        
-        /* Color Coding based on your Excel */
-        .editable { background-color: #FFF2CC; } /* Yellow for inputs */
-        .total-cell { background-color: #E2EFDA; font-weight: bold; } /* Green for totals */
-        .deduction-cell { background-color: #FCE4D6; font-weight: bold; color: #C00000; } /* Red for deductions */
-        .summary-title { font-weight: bold; background-color: #003366; color: white; padding: 10px; text-align: center; margin-top: 0; border-radius: 4px; }
-        
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #eee; }
-        .summary-row.total { font-weight: bold; font-size: 16px; background-color: #E2EFDA; padding: 10px; border: 1px solid #444; }
-        
-        button { background-color: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; font-size: 16px; border-radius: 4px; width: 100%; margin-top: 10px; font-weight: bold; }
-        button:hover { background-color: #218838; }
-        .clear-btn { background-color: #dc3545; }
-        .clear-btn:hover { background-color: #c82333; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#003366">
+<title>BIVAS Salary Manager</title>
+<style>
+:root{font-family:Arial,sans-serif;color:#172033;background:#f3f6fb}
+*{box-sizing:border-box}body{margin:0;padding:14px}h2{text-align:center;color:#003366;margin:8px 0 16px}
+.toolbar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;background:#fff;padding:12px;border-radius:10px;margin-bottom:14px}
+.toolbar label{font-weight:700}.toolbar input{padding:8px;border:1px solid #ccd4df;border-radius:6px}
+.container{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+.table-container,.summary-container{background:#fff;border-radius:10px;padding:12px;box-shadow:0 2px 10px #0000000c}
+.table-container{overflow:auto}table{width:100%;border-collapse:collapse;min-width:690px;font-size:14px}
+th,td{border:1px solid #cbd2dc;padding:7px;text-align:center}th{background:#003366;color:white;position:sticky;top:0;z-index:1}
+input,select{max-width:100%;padding:6px;border:1px solid #cbd2dc;border-radius:4px;text-align:center}
+.editable{background:#fff2cc}.total-cell{background:#e2efda;font-weight:bold}.deduction-cell{background:#fce4d6;color:#a40000}
+.summary-title{background:#003366;color:white;padding:10px;text-align:center;border-radius:6px;margin:0 0 14px}
+.summary-row{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:8px 0;padding-bottom:7px;border-bottom:1px solid #edf0f4}
+.summary-row input{width:100px}.summary-row.total{font-weight:bold;font-size:15px;background:#e2efda;padding:10px;border:1px solid #aab8a5;border-radius:5px}
+button{background:#218838;color:white;border:0;padding:11px 14px;border-radius:6px;font-size:15px;font-weight:bold;width:100%;margin-top:9px}
+.clear-btn{background:#c82333}.note{font-size:12px;color:#5d6675;line-height:1.5}
+@media(max-width:850px){body{padding:8px}.container{grid-template-columns:1fr}.summary-container{order:0}.table-container{order:1}.summary-row.total{font-size:14px}}
+</style>
 </head>
 <body>
-
-    <h2>Monthly Attendance & Salary Dashboard</h2>
-
-    <div class="container">
-        <!-- Attendance Table -->
-        <div class="table-container">
-            <table id="attendanceTable">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Day Type</th>
-                        <th>In Time</th>
-                        <th>Out Time</th>
-                        <th>Total Hours</th>
-                        <th>OT Hours</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Rows will be generated by JS -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Summary & Calculations -->
-        <div class="summary-container">
-            <h3 class="summary-title">Salary Summary</h3>
-            
-            <div class="summary-row"><span>Monthly Basic:</span> <strong>₹23,625</strong></div>
-            <div class="summary-row"><span>Target Hours:</span> <strong>225 Hrs</strong></div>
-            <div class="summary-row"><span>OT Rate:</span> <strong>₹105/Hr</strong></div>
-            <hr>
-            
-            <!-- Deductions (Editable) -->
-            <div class="summary-row deduction-cell">
-                <span>EPF (₹):</span>
-                <input type="number" id="epf" class="editable" value="0" style="width: 80px;" onchange="calculateSalary()">
-            </div>
-            <div class="summary-row deduction-cell">
-                <span>Mediclaim (₹):</span>
-                <input type="number" id="mediclaim" class="editable" value="0" style="width: 80px;" onchange="calculateSalary()">
-            </div>
-            <div class="summary-row deduction-cell">
-                <span>Prof. Tax (₹):</span>
-                <input type="number" id="ptax" class="editable" value="0" style="width: 80px;" onchange="calculateSalary()">
-            </div>
-            <hr>
-
-            <!-- Auto Calculated Results -->
-            <div class="summary-row"><span>Total Working Hours:</span> <strong id="lblTotalHrs">0.00</strong></div>
-            <div class="summary-row"><span>Total OT Hours:</span> <strong id="lblTotalOT">0.00</strong></div>
-            <div class="summary-row deduction-cell"><span>Shortfall Deduction:</span> <strong id="lblShortfall">₹0</strong></div>
-            
-            <br>
-            <div class="summary-row total"><span>1st Payment:</span> <strong id="lblFirstPay">₹0</strong></div>
-            <div class="summary-row total"><span>2nd Payment:</span> <strong id="lblSecondPay">₹0</strong></div>
-            <div class="summary-row total" style="background-color: #D9E1F2; border-color: #003366;">
-                <span>Net Total Salary:</span> <strong id="lblNetSalary">₹0</strong>
-            </div>
-
-            <button onclick="exportCSV()">Export to Excel (CSV)</button>
-            <button class="clear-btn" onclick="clearData()">Clear All Data</button>
-        </div>
-    </div>
-
-    <script>
-        const FIXED_BASIC = 23625;
-        const TARGET_HOURS = 225;
-        const OT_RATE = 105;
-        const DAILY_BASIC = 945;
-        const MAX_CL_HOURS = 18; // 2 days CL
-
-        function initTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            for (let i = 1; i <= 31; i++) {
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>Day ${i}</td>
-                    <td class="editable">
-                        <select id="type_${i}" onchange="calculateRow(${i}); saveData()">
-                            <option value="Normal">Normal</option>
-                            <option value="Sunday">Sunday</option>
-                            <option value="Holiday">Holiday</option>
-                            <option value="Off">Off</option>
-                            <option value="CL">CL</option>
-                        </select>
-                    </td>
-                    <td class="editable"><input type="time" id="in_${i}" onchange="calculateRow(${i}); saveData()"></td>
-                    <td class="editable"><input type="time" id="out_${i}" onchange="calculateRow(${i}); saveData()"></td>
-                    <td class="total-cell" id="hrs_${i}">0.00</td>
-                    <td class="total-cell" id="ot_${i}">0.00</td>
-                `;
-                tbody.appendChild(tr);
-            }
-            loadData();
-        }
-
-        function calculateRow(day) {
-            const type = document.getElementById(`type_${day}`).value;
-            const inTime = document.getElementById(`in_${day}`).value;
-            const outTime = document.getElementById(`out_${day}`).value;
-            let totalHrs = 0;
-            let otHrs = 0;
-
-            if (inTime && outTime && (type === 'Normal' || type === 'Sunday' || type === 'Holiday')) {
-                let inDate = new Date(`2000-01-01T${inTime}:00`);
-                let outDate = new Date(`2000-01-01T${outTime}:00`);
-                
-                // Handle night shift / overnight
-                if (outDate < inDate) {
-                    outDate.setDate(outDate.getDate() + 1);
-                }
-                
-                totalHrs = (outDate - inDate) / (1000 * 60 * 60);
-
-                if (type === 'Sunday' || type === 'Holiday') {
-                    otHrs = totalHrs; // All hours are OT
-                } else if (type === 'Normal' && totalHrs > 9) {
-                    otHrs = totalHrs - 9; // Hours beyond 9 are OT
-                }
-            }
-
-            document.getElementById(`hrs_${day}`).innerText = totalHrs.toFixed(2);
-            document.getElementById(`ot_${day}`).innerText = otHrs.toFixed(2);
-            
-            calculateSalary();
-        }
-
-        function calculateSalary() {
-            let totalWorkingHours = 0;
-            let totalOTHours = 0;
-
-            for (let i = 1; i <= 31; i++) {
-                totalWorkingHours += parseFloat(document.getElementById(`hrs_${i}`).innerText || 0);
-                totalOTHours += parseFloat(document.getElementById(`ot_${i}`).innerText || 0);
-            }
-
-            // Deductions inputs
-            const epf = parseFloat(document.getElementById('epf').value || 0);
-            const mediclaim = parseFloat(document.getElementById('mediclaim').value || 0);
-            const ptax = parseFloat(document.getElementById('ptax').value || 0);
-
-            // Shortfall Deduction = MAX(0, 225 - Total Working Hours - 18) * 105
-            let shortFallHrs = TARGET_HOURS - totalWorkingHours - MAX_CL_HOURS;
-            if(shortFallHrs < 0) shortFallHrs = 0;
-            let shortfallDeduction = shortFallHrs * OT_RATE;
-
-            // 1st Payment = Basic - EPF - Mediclaim - PTax - Shortfall Deduction
-            let firstPayment = FIXED_BASIC - epf - mediclaim - ptax - shortfallDeduction;
-
-            // 2nd Payment = (OT Hours * 105) + (2 * 945)
-            let secondPayment = (totalOTHours * OT_RATE) + (2 * DAILY_BASIC);
-
-            let netTotal = firstPayment + secondPayment;
-
-            // Update UI
-            document.getElementById('lblTotalHrs').innerText = totalWorkingHours.toFixed(2);
-            document.getElementById('lblTotalOT').innerText = totalOTHours.toFixed(2);
-            document.getElementById('lblShortfall').innerText = "₹" + Math.round(shortfallDeduction);
-            document.getElementById('lblFirstPay').innerText = "₹" + Math.round(firstPayment);
-            document.getElementById('lblSecondPay').innerText = "₹" + Math.round(secondPayment);
-            document.getElementById('lblNetSalary').innerText = "₹" + Math.round(netTotal);
-        }
-
-        function saveData() {
-            let data = {
-                epf: document.getElementById('epf').value,
-                mediclaim: document.getElementById('mediclaim').value,
-                ptax: document.getElementById('ptax').value,
-                days: {}
-            };
-            for (let i = 1; i <= 31; i++) {
-                data.days[i] = {
-                    type: document.getElementById(`type_${i}`).value,
-                    in: document.getElementById(`in_${i}`).value,
-                    out: document.getElementById(`out_${i}`).value
-                };
-            }
-            localStorage.setItem('salaryData', JSON.stringify(data));
-        }
-
-        function loadData() {
-            let saved = localStorage.getItem('salaryData');
-            if (saved) {
-                let data = JSON.parse(saved);
-                document.getElementById('epf').value = data.epf || 0;
-                document.getElementById('mediclaim').value = data.mediclaim || 0;
-                document.getElementById('ptax').value = data.ptax || 0;
-                
-                for (let i = 1; i <= 31; i++) {
-                    if (data.days[i]) {
-                        document.getElementById(`type_${i}`).value = data.days[i].type;
-                        document.getElementById(`in_${i}`).value = data.days[i].in;
-                        document.getElementById(`out_${i}`).value = data.days[i].out;
-                        calculateRow(i);
-                    }
-                }
-            }
-        }
-
-        function clearData() {
-            if(confirm("Are you sure you want to clear all data?")) {
-                localStorage.removeItem('salaryData');
-                initTable();
-                calculateSalary();
-            }
-        }
-
-        function exportCSV() {
-            let csv = "Date,Day Type,In Time,Out Time,Total Hours,OT Hours\n";
-            for (let i = 1; i <= 31; i++) {
-                let type = document.getElementById(`type_${i}`).value;
-                let inT = document.getElementById(`in_${i}`).value;
-                let outT = document.getElementById(`out_${i}`).value;
-                let hrs = document.getElementById(`hrs_${i}`).innerText;
-                let ot = document.getElementById(`ot_${i}`).innerText;
-                csv += `Day ${i},${type},${inT},${outT},${hrs},${ot}\n`;
-            }
-            
-            csv += `\nSummary\n`;
-            csv += `Total Working Hours,${document.getElementById('lblTotalHrs').innerText}\n`;
-            csv += `Total OT Hours,${document.getElementById('lblTotalOT').innerText}\n`;
-            csv += `Shortfall Deduction,${document.getElementById('lblShortfall').innerText}\n`;
-            csv += `1st Payment,${document.getElementById('lblFirstPay').innerText}\n`;
-            csv += `2nd Payment,${document.getElementById('lblSecondPay').innerText}\n`;
-            csv += `Net Salary,${document.getElementById('lblNetSalary').innerText}\n`;
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'Monthly_Salary_Report.csv');
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        window.onload = initTable;
-    </script>
-</body>
-</html>
+<h2>BIVAS Monthly Attendance &amp; Salary</h2>
+<div class="toolbar"><label for="monthPicker">মাস নির্বাচন:</label><input type="month" id="monthPicker"></div>
+<div class="container">
+<section class="table-container">
+<table><thead><tr><th>Date</th><th>Day Type</th><th>In Time</th><th>Out Time</th><th>Total Hours</th><th>OT Hours</th></tr></thead><tbody id="tableBody"></tbody></table>
+<p class="note">Normal দিনে ৯ ঘণ্টার বেশি সময় OT হিসেবে গণনা হবে। Sunday/Holiday-র সব কাজের সময় OT। Off ও CL দিনে সময় গণনা হবে না।</p>
+</section>
+<aside class="summary-container">
+<h3 class="summary-title">Salary Summary</h3>
+<div class="summary-row"><span>Monthly Basic</span><strong>₹23,625</strong></div>
+<div class="summary-row"><span>Target Hours</span><strong>225 Hrs</strong></div>
+<div class="summary-row"><span>OT Rate</span><strong>₹105/Hr</strong></div><hr>
+<div class="summary-row deduction-cell"><label for="epf">EPF (₹)</label><input type="number" id="epf" min="0" step="1" value="0"></div>
+<div class="summary-row deduction-cell"><label for="mediclaim">Mediclaim (₹)</label><input type="number" id="mediclaim" min="0" step="1" value="0"></div>
+<div class="summary-row deduction-cell"><label for="ptax">Prof. Tax (₹)</label><input type="number" id="ptax" min="0" step="1" value="0"></div><hr>
+<div class="summary-row"><span>Total Working Hours</span><strong id="lblTotalHrs">0.00</strong></div>
+<div class="summary-row"><span>Total OT Hours</span><strong id="lblTotalOT">0.00</strong></div>
+<div class="summary-row deduction-cell"><span>Shortfall Deduction</span><strong id="lblShortfall">₹0</strong></div>
+<div class="summary-row total"><span>1st Payment</span><strong id="lblFirstPay">₹0</strong></div>
+<div class="summary-row total"><span>2nd Payment</span><strong id="lblSecondPay">₹0</strong></div>
+<div class="summary-row total" style="background:#d9e1f2;border-color:#003366"><span>Net Total Salary</span><strong id="lblNetSalary">₹0</strong></div>
+<button id="exportBtn">Export Excel (CSV)</button><button class="clear-btn" id="clearBtn">Clear This Month</button>
+<p class="note">ডেটা এই ডিভাইসের অ্যাপে স্বয়ংক্রিয়ভাবে সংরক্ষিত হয়। অ্যাপের ডেটা মুছে ফেললে সংরক্ষিত তথ্যও মুছে যেতে পারে।</p>
+</aside></div>
+<script>
+'use strict';
+const FIXED_BASIC=23625,TARGET_HOURS=225,OT_RATE=105,DAILY_BASIC=945,MAX_CL_HOURS=18;
+const $=id=>document.getElementById(id);
+let currentMonth='';
+function monthKey(){return 'bivasSalaryData_'+currentMonth}
+function safeNumber(value){const n=Number(value);return Number.isFinite(n)&&n>0?n:0}
+function dateCount(month){const [y,m]=month.split('-').map(Number);return new Date(y,m,0).getDate()}
+function initTable(){
+ const picker=$('monthPicker');
+ if(!picker.value){const now=new Date();picker.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')}
+ currentMonth=picker.value;
+ const tbody=$('tableBody');tbody.innerHTML='';
+ for(let i=1;i<=dateCount(currentMonth);i++){
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td>'+String(i).padStart(2,'0')+'/'+currentMonth+'</td>'+
+  '<td class="editable"><select id="type_'+i+'"><option>Normal</option><option>Sunday</option><option>Holiday</option><option>Off</option><option>CL</option></select></td>'+
+  '<td class="editable"><input type="time" id="in_'+i+'"></td><td class="editable"><input type="time" id="out_'+i+'"></td>'+
+  '<td class="total-cell" id="hrs_'+i+'">0.00</td><td class="total-cell" id="ot_'+i+'">0.00</td>';
+  tbody.appendChild(tr);
+  ['type_'+i,'in_'+i,'out_'+i].forEach(id=>$(id).addEventListener('change',()=>{calculateRow(i);saveData()}));
+ }
+ loadData();
+}
+function calculateRow(day){
+ const type=$('type_'+day).value,inTime=$('in_'+day).value,outTime=$('out_'+day).value;
+ let total=0,ot=0;
+ if(inTime&&outTime&&(type==='Normal'||type==='Sunday'||type==='Holiday')){
+  const [ih,im]=inTime.split(':').map(Number),[oh,om]=outTime.split(':').map(Number);
+  let minutes=(oh*60+om)-(ih*60+im);if(minutes<0)minutes+=1440;
+  total=minutes/60;
+  if(type==='Sunday'||type==='Holiday')ot=total;else if(total>9)ot=total-9;
+ }
+ $('hrs_'+day).textContent=total.toFixed(2);$('ot_'+day).textContent=ot.toFixed(2);calculateSalary();
+}
+function calculateSalary(){
+ let totalHrs=0,totalOT=0;
+ for(let i=1;i<=dateCount(currentMonth);i++){totalHrs+=safeNumber($('hrs_'+i).textContent);totalOT+=safeNumber($('ot_'+i).textContent)}
+ const epf=safeNumber($('epf').value),med=safeNumber($('mediclaim').value),tax=safeNumber($('ptax').value);
+ const shortfall=Math.max(0,TARGET_HOURS-totalHrs-MAX_CL_HOURS)*OT_RATE;
+ const first=FIXED_BASIC-epf-med-tax-shortfall,second=totalOT*OT_RATE+2*DAILY_BASIC;
+ $('lblTotalHrs').textContent=totalHrs.toFixed(2);$('lblTotalOT').textContent=totalOT.toFixed(2);
+ $('lblShortfall').textContent=money(shortfall);$('lblFirstPay').textContent=money(first);
+ $('lblSecondPay').textContent=money(second);$('lblNetSalary').textContent=money(first+second);
+}
+function money(n){return '₹'+Math.round(n).toLocaleString('en-IN')}
+function saveData(){
+ const data={epf:$('epf').value,mediclaim:$('mediclaim').value,ptax:$('ptax').value,days:{}};
+ for(let i=1;i<=dateCount(currentMonth);i++)data.days[i]={type:$('type_'+i).value,in:$('in_'+i).value,out:$('out_'+i).value};
+ try{localStorage.setItem(monthKey(),JSON.stringify(data))}catch(e){alert('ডেটা সংরক্ষণ করা যায়নি। ডিভাইসে জায়গা আছে কি না দেখুন।')}
+}
+function loadData(){
+ $('epf').value='0';$('mediclaim').value='0';$('ptax').value='0';
+ let data=null;try{data=JSON.parse(localStorage.getItem(monthKey())||'null')}catch(e){localStorage.removeItem(monthKey())}
+ if(data){
+  $('epf').value=data.epf??0;$('mediclaim').value=data.mediclaim??0;$('ptax').value=data.ptax??0;
+  for(let i=1;i<=dateCount(currentMonth);i++){const d=data.days?.[i];if(d){$('type_'+i).value=d.type||'Normal';$('in_'+i).value=d.in||'';$('out_'+i).value=d.out||''}}
+ }
+ for(let i=1;i<=dateCount(currentMonth);i++)calculateRow(i);
+ calculateSalary();
+}
+function clearData(){if(!confirm('এই মাসের সব attendance ও salary data মুছে ফেলবেন?'))return;localStorage.removeItem(monthKey());initTable()}
+function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+function exportCSV(){
+ const rows=[['Date','Day Type','In Time','Out Time','Total Hours','OT Hours']];
+ for(let i=1;i<=dateCount(currentMonth);i++)rows.push([i+'/'+currentMonth,$('type_'+i).value,$('in_'+i).value,$('out_'+i).value,$('hrs_'+i).textContent,$('ot_'+i).textContent]);
+ rows.push([],['Salary Summary'],['Monthly Basic',FIXED_BASIC],['Target Hours',TARGET_HOURS],['OT Rate',OT_RATE],['EPF',$('epf').value],['Mediclaim',$('mediclaim').value],['Professional Tax',$('ptax').value],['Total Working Hours',$('lblTotalHrs').textContent],['Total OT Hours',$('lblTotalOT').textContent],['Shortfall Deduction',$('lblShortfall').textContent],['1st Payment',$('lblFirstPay').textContent],['2nd Payment',$('lblSecondPay').textContent],['Net Salary',$('lblNetSalary').textContent]);
+ const csv='\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='BIVAS_Salary_'+currentMonth+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+['epf','mediclaim','ptax'].forEach(id=>$(id).addEventListener('input',()=>{calculateSalary();saveData()}));
+$('monthPicker').addEventListener('change',()=>{saveData();initTable()});
+$('exportBtn').addEventListener('click',exportCSV);$('clearBtn').addEventListener('click',clearData);
+initTable();
+</script></body></html>
