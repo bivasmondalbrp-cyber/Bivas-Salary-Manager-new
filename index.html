@@ -5,60 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bivas Salary & Attendance Manager</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        h2 {
-            color: #004d99; /* Blue Theme */
-            margin-bottom: 20px;
-        }
-        .controls {
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-            color: white;
-        }
-        .btn-in { background-color: #28a745; } /* Green */
-        .btn-out { background-color: #dc3545; } /* Red */
-        .btn-export { background-color: #007bff; } /* Blue */
-        .btn-clear { background-color: #ffc107; color: black; } /* Yellow */
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; text-align: center; }
+        h2 { color: #004d99; }
+        .controls { margin-bottom: 20px; }
+        button { padding: 10px 15px; font-size: 14px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; margin: 5px; color: white; }
+        .btn-in { background-color: #28a745; }
+        .btn-out { background-color: #dc3545; }
+        .btn-export { background-color: #007bff; }
+        .btn-clear { background-color: #ffc107; color: black; }
         
-        table {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #28a745; /* Green header like your Excel */
-            color: white;
-        }
-        .overtime-row {
-            background-color: #fff3cd; /* Yellow highlight for overtime */
-        }
+        .table-container { overflow-x: auto; margin-top: 20px;}
+        table { width: 100%; min-width: 1000px; margin: 0 auto; border-collapse: collapse; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); font-size: 13px; }
+        th, td { padding: 8px; border: 1px solid #ddd; text-align: center; }
+        th { background-color: #1f4e78; color: white; } /* Excel header blue */
+        .sunday-row { background-color: #fff3cd; } /* Sunday Highlight */
     </style>
 </head>
 <body>
 
-    <h2>Bivas Monthly Attendance & Salary Tracker</h2>
+    <h2>Bivas Salary & Attendance Manager</h2>
     <p>Daily Duty: 9 Hours | OT Rate: ₹105/hr</p>
 
     <div class="controls">
@@ -66,21 +31,27 @@
         <button class="btn-out" onclick="clockOut()">Clock OUT</button>
     </div>
 
-    <table id="attendanceTable">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>In Time</th>
-                <th>Out Time</th>
-                <th>Total Hours</th>
-                <th>Overtime</th>
-                <th>Shortfall</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            <!-- Data will appear here -->
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table id="attendanceTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Working Type</th>
+                    <th>In Time</th>
+                    <th>Out Time</th>
+                    <th>Total Working Hours</th>
+                    <th>Total Working Hours</th>
+                    <th>Regular Duty Hours</th>
+                    <th>OT Hours</th>
+                    <th>OT Hours</th>
+                    <th>OT Amount</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
 
     <div class="controls" style="margin-top: 20px;">
         <button class="btn-export" onclick="exportCSV()">Export to Excel (CSV)</button>
@@ -88,19 +59,25 @@
     </div>
 
     <script>
-        let attendanceData = JSON.parse(localStorage.getItem('bivasAttendance')) || [];
+        let attendanceData = JSON.parse(localStorage.getItem('bivasAttendanceFull')) || [];
 
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-            attendanceData.forEach((record, index) => {
-                let row = `<tr class="${record.overtime !== '0h 0m' ? 'overtime-row' : ''}">
+            attendanceData.forEach(record => {
+                let rowClass = record.workingType === 'Sunday' ? 'sunday-row' : '';
+                let row = `<tr class="${rowClass}">
                     <td>${record.date}</td>
+                    <td>${record.day}</td>
+                    <td>${record.workingType}</td>
                     <td>${record.inTime || '--'}</td>
                     <td>${record.outTime || '--'}</td>
-                    <td>${record.totalHours || '--'}</td>
-                    <td>${record.overtime || '--'}</td>
-                    <td>${record.shortfall || '--'}</td>
+                    <td>${record.totalHoursDec || '--'}</td>
+                    <td>${record.totalHoursHHMM || '--'}</td>
+                    <td>${record.regularDuty || '--'}</td>
+                    <td>${record.otHoursHHMM || '--'}</td>
+                    <td>${record.otHoursDec || '--'}</td>
+                    <td>${record.otAmount ? '₹'+record.otAmount : '--'}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
@@ -108,40 +85,63 @@
 
         function getCurrentTime() {
             const now = new Date();
-            return now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+            return now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
 
         function getCurrentDate() {
             const now = new Date();
-            return now.toISOString().split('T')[0];
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
-        function calculateHours(inTime, outTime) {
+        function getDayName(dateStr) {
+            const dateObj = new Date(dateStr);
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return days[dateObj.getDay()];
+        }
+
+        function calculateRecord(inTime, outTime, dateStr) {
+            const dailyDutyHours = 9.0;
+            const otRate = 105;
+            
+            const dayName = getDayName(dateStr);
+            const workingType = dayName === 'Sunday' ? 'Sunday' : 'Normal';
+
             const [inH, inM] = inTime.split(':').map(Number);
             const [outH, outM] = outTime.split(':').map(Number);
             
             let totalMinutes = (outH * 60 + outM) - (inH * 60 + inM);
-            if (totalMinutes < 0) totalMinutes += 24 * 60; // Handle overnight shift
+            if (totalMinutes < 0) totalMinutes += 24 * 60; // Overnight shift handle
 
-            const hours = Math.floor(totalMinutes / 60);
-            const minutes = totalMinutes % 60;
-            
-            let overtime = '0h 0m';
-            let shortfall = '0h 0m';
-            const standardMinutes = 9 * 60;
+            const totalHoursDec = totalMinutes / 60;
+            const totalHoursHHMM = `${Math.floor(totalMinutes / 60)} : ${String(totalMinutes % 60).padStart(2, '0')}`;
 
-            if (totalMinutes > standardMinutes) {
-                const otMins = totalMinutes - standardMinutes;
-                overtime = `${Math.floor(otMins / 60)}h ${otMins % 60}m`;
-            } else if (totalMinutes < standardMinutes) {
-                const sfMins = standardMinutes - totalMinutes;
-                shortfall = `${Math.floor(sfMins / 60)}h ${sfMins % 60}m`;
+            let regularDuty = 0;
+            let otHoursDec = 0;
+
+            if (workingType === 'Normal') {
+                regularDuty = Math.min(totalHoursDec, dailyDutyHours);
+                otHoursDec = Math.max(totalHoursDec - dailyDutyHours, 0);
+            } else {
+                regularDuty = 0;
+                otHoursDec = totalHoursDec; // Sundays = Full OT
             }
 
+            const otMinutes = Math.round(otHoursDec * 60);
+            const otHoursHHMM = `${Math.floor(otMinutes / 60)} : ${String(otMinutes % 60).padStart(2, '0')}`;
+            const otAmount = otHoursDec * otRate;
+
             return {
-                total: `${hours}h ${minutes}m`,
-                overtime: overtime,
-                shortfall: shortfall
+                day: dayName,
+                workingType: workingType,
+                totalHoursDec: totalHoursDec.toFixed(6),
+                totalHoursHHMM: totalHoursHHMM,
+                regularDuty: regularDuty.toFixed(1),
+                otHoursHHMM: otHoursHHMM,
+                otHoursDec: otHoursDec.toFixed(6),
+                otAmount: otAmount.toFixed(2)
             };
         }
 
@@ -151,7 +151,13 @@
             let todayRecord = attendanceData.find(r => r.date === date);
 
             if (!todayRecord) {
-                attendanceData.push({ date: date, inTime: time, outTime: '', totalHours: '', overtime: '', shortfall: '' });
+                const dayName = getDayName(date);
+                const wType = dayName === 'Sunday' ? 'Sunday' : 'Normal';
+                attendanceData.push({ 
+                    date: date, day: dayName, workingType: wType, 
+                    inTime: time, outTime: '', totalHoursDec: '', totalHoursHHMM: '', 
+                    regularDuty: '', otHoursHHMM: '', otHoursDec: '', otAmount: '' 
+                });
                 saveAndRender();
                 alert(`Clocked IN at ${time}`);
             } else {
@@ -166,10 +172,8 @@
 
             if (todayRecord && !todayRecord.outTime) {
                 todayRecord.outTime = time;
-                const calc = calculateHours(todayRecord.inTime, todayRecord.outTime);
-                todayRecord.totalHours = calc.total;
-                todayRecord.overtime = calc.overtime;
-                todayRecord.shortfall = calc.shortfall;
+                const calc = calculateRecord(todayRecord.inTime, todayRecord.outTime, date);
+                Object.assign(todayRecord, calc);
                 saveAndRender();
                 alert(`Clocked OUT at ${time}`);
             } else if (!todayRecord) {
@@ -180,12 +184,12 @@
         }
 
         function saveAndRender() {
-            localStorage.setItem('bivasAttendance', JSON.stringify(attendanceData));
+            localStorage.setItem('bivasAttendanceFull', JSON.stringify(attendanceData));
             renderTable();
         }
 
         function clearData() {
-            if(confirm("Are you sure you want to clear all data for this month?")) {
+            if(confirm("Are you sure you want to clear all data?")) {
                 attendanceData = [];
                 saveAndRender();
             }
@@ -193,22 +197,21 @@
 
         function exportCSV() {
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Date,In Time,Out Time,Total Hours,Overtime,Shortfall\n";
+            csvContent += "Date,Day,Working Type,In Time,Out Time,Total Working Hours,Total Working Hours,Regular Duty Hours,OT Hours,OT Hours,OT Amount\n";
             
             attendanceData.forEach(row => {
-                csvContent += `${row.date},${row.inTime},${row.outTime},${row.totalHours},${row.overtime},${row.shortfall}\n`;
+                csvContent += `${row.date},${row.day},${row.workingType},${row.inTime},${row.outTime},${row.totalHoursDec},${row.totalHoursHHMM},${row.regularDuty},${row.otHoursHHMM},${row.otHoursDec},${row.otAmount}\n`;
             });
 
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Bivas_Monthly_Attendance.csv");
+            link.setAttribute("download", "Bivas_Attendance_Exact_Sheet.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        // Initial render
         renderTable();
     </script>
 </body>
