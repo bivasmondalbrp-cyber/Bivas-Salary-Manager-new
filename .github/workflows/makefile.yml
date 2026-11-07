@@ -1,11 +1,12 @@
 name: Disable Incorrect Makefile CI
 
 on:
-workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-skip:
-runs-on: ubuntu-latest
-steps:
-- name: Skip incorrect workflow
-run: echo "Android APK is built by build-apk.yml"
+  skip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip incorrect workflow
+        run: echo "Android APK is built by build-apk.yml"
+        
