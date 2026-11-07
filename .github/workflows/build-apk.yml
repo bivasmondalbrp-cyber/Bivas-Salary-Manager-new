@@ -1,46 +1,56 @@
 name: Build BIVAS Salary Manager APK
 
 on:
-workflow_dispatch:
-push:
-branches:
-- main
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 permissions:
-contents: read
+  contents: read
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Set up JDK 17
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: '17'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-  - name: Set up Android SDK
-    uses: android-actions/setup-android@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-  - name: Extract Android project ZIP
-    run: |
-      unzip -o BIVAS_SALARY_MANAGER_FIXED_v2.zip -d android-project
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-  - name: Find Gradle project
-    run: |
-      find android-project -name settings.gradle -o -name settings.gradle.kts
+      - name: Install dependencies
+        run: npm install
 
-  - name: Build APK
-    run: |
-      cd android-project
-      gradle assembleDebug
+      - name: Prepare web assets
+        run: npm run build
 
-  - name: Upload APK
-    uses: actions/upload-artifact@v4
-    with:
-      name: BIVAS-Salary-Manager-APK
-      path: android-project/**/build/outputs/apk/debug/*.apk
+      - name: Generate Android project
+        run: npx cap add android
+
+      - name: Sync app assets
+        run: npx cap sync android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BIVAS-Salary-Manager-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
