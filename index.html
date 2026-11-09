@@ -168,7 +168,6 @@ function exportCSV(){
 function backup(){saveData();let blob=new Blob([JSON.stringify({records,holidays,monthSettings,settings:JSON.parse(localStorage.getItem('bivas-current-settings')||'{}')},null,2)],{type:'application/json'});download(blob,'Bivas_Salary_Backup.json')}
 function restore(e){let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{try{let d=JSON.parse(rd.result);records=d.records||{};holidays=d.holidays||[];monthSettings=d.monthSettings||{};Object.entries(d.settings||{}).forEach(([k,v])=>{if($(k))$(k).value=v});localStorage.setItem('bivas-records',JSON.stringify(records));localStorage.setItem('bivas-holidays',JSON.stringify(holidays));localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings));saveSettings();renderHolidayList();renderMonth();alert('Backup Restore হয়েছে।')}catch(err){alert('Backup ফাইলটি সঠিক নয়।')} $('restorePick').value=''};rd.readAsText(f)}
 function download(blob,name){
- // Android Chrome/WebView-এ download attribute কখনও কাজ না করলে দৃশ্যমান fallback link দেখানো হবে।
  const box=$('downloadFallback'),link=$('downloadLink');
  try{
   const url=URL.createObjectURL(blob);
@@ -177,7 +176,6 @@ function download(blob,name){
   document.body.appendChild(a);
   a.click();
   setTimeout(()=>a.remove(),1500);
-  // Link-টি ২ মিনিট সক্রিয় থাকবে, যাতে Android-এ পরে ট্যাপ করলেও ফাইল পাওয়া যায়।
   setTimeout(()=>URL.revokeObjectURL(url),120000);
  }catch(err){
   const reader=new FileReader();reader.onload=()=>{link.href=reader.result;link.download=name;link.textContent=name;box.classList.remove('hidden')};reader.readAsDataURL(blob);
@@ -198,4 +196,5 @@ SET_KEYS.forEach(k=>{
 });
 init();
 </script>
-</body></html>
+</body>
+</html>
