@@ -108,7 +108,7 @@ function defaultType(date,day){return holidayName(date)?'Holiday':day===0?'Sunda
 function renderMonth(){
  let yr=Number($('year').value),mo=Number($('month').value);
  if(!Number.isInteger(yr)||yr<2000||yr>2100||!Number.isInteger(mo)||mo<0||mo>11){alert('সঠিক বছর ও মাস নির্বাচন করুন।');return}
-   if($('attendance').children.length&&displayedMonthKey){readRecords(displayedMonthKey);monthSettings[displayedMonthKey]=settingsObject();localStorage.setItem('bivas-records',JSON.stringify(records));localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings))}
+ if($('attendance').children.length&&displayedMonthKey){readRecords(displayedMonthKey);monthSettings[displayedMonthKey]=settingsObject();localStorage.setItem('bivas-records',JSON.stringify(records));localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings))}
  let target=monthKey();if(displayedMonthKey!==target)applyMonthSettings(target);
  if(!monthSettings[target])monthSettings[target]=settingsObject();
  displayedMonthKey=target;saveSettings();
@@ -116,16 +116,29 @@ function renderMonth(){
  let saved=records[displayedMonthKey]||{};
  for(let d=1;d<=n;d++){
   let dt=dateKey(y,m,d),day=new Date(y,m,d).getDay(),typ=defaultType(dt,day),r=saved[dt]||{};
-  if(holidayName(dt))r.type='Holiday';else if(r.type==='Holiday')r.type=day===0?'Sunday':'Normal';
+     if(holidayName(dt))r.type='Holiday';else if(r.type==='Holiday')r.type=day===0?'Sunday':'Normal';
   let tr=document.createElement('tr');
   tr.innerHTML=`<td>${dt}</td><td>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]}</td><td><select data-date="${dt}" class="typ"><option ${ (r.type||typ)==='Normal'?'selected':''}>Normal</option><option ${(r.type||typ)==='Sunday'?'selected':''}>Sunday</option><option ${(r.type||typ)==='Holiday'?'selected':''}>Holiday</option><option ${(r.type||typ)==='Off'?'selected':''}>Off</option></select>${holidayName(dt)?`<div class="muted">${holidayName(dt)}</div>`:''}</td><td><input type="time" class="in" data-date="${dt}" value="${r.in||''}"></td><td><input type="time" class="out" data-date="${dt}" value="${r.out||''}"></td><td class="worked" data-date="${dt}">0 ঘ 0 মি</td><td class="ot" data-date="${dt}">0 ঘ 0 মি</td>`;
   tb.appendChild(tr);
  }
+ // Android WebView-এর time picker-এ focus-এর সময় prompt দিলে picker আটকে যেতে পারে।
+ // তাই সময় বাছাই শেষ হওয়ার পরে change/blur-এ Password যাচাই করা হচ্ছে।
  document.querySelectorAll('#attendance input[type=time]').forEach(el=>{
   el.dataset.last=el.value;
-  el.addEventListener('focus',()=>{authorizedTimeEdit=ensurePassword();if(!authorizedTimeEdit){el.value=el.dataset.last;el.blur()}});
-  el.addEventListener('change',()=>{if(!authorizedTimeEdit){el.value=el.dataset.last;return}el.dataset.last=el.value;saveCurrentMonth();calculate()});
-  el.addEventListener('blur',()=>{if(!authorizedTimeEdit)el.value=el.dataset.last;authorizedTimeEdit=false});
+  const commitTimeEdit=()=>{
+   const newValue=el.value;
+   if(newValue===el.dataset.last)return;
+   if(!ensurePassword()){
+    el.value=el.dataset.last;
+    calculate();
+    return;
+   }
+   el.dataset.last=newValue;
+   saveCurrentMonth();
+   calculate();
+  };
+  el.addEventListener('change',commitTimeEdit);
+  el.addEventListener('blur',commitTimeEdit);
  });
  document.querySelectorAll('#attendance select').forEach(el=>el.addEventListener('change',()=>{saveCurrentMonth();calculate()}));
  calculate();
@@ -136,7 +149,14 @@ function calculate(){
  let rs=readRecords(),requiredDays=0,total=0,rawOT=0,rows=[];
  for(let [date,r] of Object.entries(rs)){
   let day=new Date(date+'T12:00:00').getDay(),t=holidayName(date)?'Holiday':(r.type||defaultType(date,day)),hrs=0;
-  if(r.in&&r.out){let [ih,im]=r.in.split(':').map(Number),[oh,om]=r.out.split(':').map(Number);hrs=((oh*60+om)-(ih*60+im)+1440)%1440/60}
+  const inParts=String(r.in||'').split(':').map(Number);
+  const outParts=String(r.out||'').split(':').map(Number);
+  if(inParts.length===2&&outParts.length===2&&inParts.every(Number.isFinite)&&outParts.every(Number.isFinite)){
+   const inMinutes=inParts[0]*60+inParts[1],outMinutes=outParts[0]*60+outParts[1];
+   if(inMinutes>=0&&inMinutes<1440&&outMinutes>=0&&outMinutes<1440&&inMinutes!==outMinutes){
+    let diff=outMinutes-inMinutes;if(diff<0)diff+=1440;hrs=diff/60;
+   }
+  }
   if(t==='Normal')requiredDays++;
   let extra=(t==='Sunday'||t==='Holiday')?hrs:(t==='Normal'?Math.max(0,hrs-num('dailyHours')):0);
   total+=hrs;rawOT+=extra;rows.push({date,hrs,extra});
@@ -152,15 +172,14 @@ function calculate(){
  let salary=num('salary'),daily=salary/25,hpd=num('dailyHours'),hourly=hpd>0?daily/hpd:0;
  let clAdjusted=Math.min(Math.max(0,required-total),num('clHours')),shortfall=Math.max(0,required-total-clAdjusted);
  let otAmount=ot*hourly,deduction=shortfall*hourly,first=salary-num('epf')-num('mediclaim')-num('ptax')-deduction,second=otAmount;
- let vals=[['Daily Basic',`₹${daily.toFixed(2)}`],['Hourly Rate',`₹${hourly.toFixed(2)}`],['Normal Working Days',requiredDays],['Required Duty Hours',fmtTime(required)],['Total Worked Hours',fmtTime(total)],['Total OT',fmtTime(ot)],['OT Amount',`₹${otAmount.toFixed(2)}`],['Available CL',fmtTime(num('clHours'))],['CL Adjusted',fmtTime(clAdjusted)],['Remaining Shortfall',fmtTime(shortfall)],['Shortfall Deduction',`₹${deduction.toFixed(2)}`],['1st Payment',`₹${first.toFixed(2)}`],['2nd Payment',`₹${second.toFixed(2)}`],['TOTAL SALARY',`₹${(first+second).toFixed(2)}`]];
+   let vals=[['Daily Basic',`₹${daily.toFixed(2)}`],['Hourly Rate',`₹${hourly.toFixed(2)}`],['Normal Working Days',requiredDays],['Required Duty Hours',fmtTime(required)],['Total Worked Hours',fmtTime(total)],['Total OT',fmtTime(ot)],['OT Amount',`₹${otAmount.toFixed(2)}`],['Available CL',fmtTime(num('clHours'))],['CL Adjusted',fmtTime(clAdjusted)],['Remaining Shortfall',fmtTime(shortfall)],['Shortfall Deduction',`₹${deduction.toFixed(2)}`],['1st Payment',`₹${first.toFixed(2)}`],['2nd Payment',`₹${second.toFixed(2)}`],['TOTAL SALARY',`₹${(first+second).toFixed(2)}`]];
  $('summary').innerHTML=vals.map(([k,v])=>`<div class="stat"><label>${k}</label><b class="${k==='TOTAL SALARY'?'good':k==='Remaining Shortfall'&&shortfall>0?'bad':''}">${v}</b></div>`).join('');
 }
 function saveData(){calculate();saveCurrentMonth();saveSettings();alert('এই মাসের Attendance ও Salary Settings Save হয়েছে।')}
 function updateHolidayTypes(date,adding){
  let y=Number(date.slice(0,4)),m=Number(date.slice(5,7))-1,d=Number(date.slice(8,10)),day=new Date(y,m,d).getDay(),k=date.slice(0,7);
  records[k]=records[k]||{};let r=records[k][date]||{in:'',out:''};
- if(adding)r.type='Holiday';
-   else if(r.type==='Holiday')r.type=day===0?'Sunday':'Normal';
+ if(adding)r.type='Holiday';else if(r.type==='Holiday')r.type=day===0?'Sunday':'Normal';
  records[k][date]=r;localStorage.setItem('bivas-records',JSON.stringify(records));
 }
 function addHoliday(){let d=$('holidayDate').value,n=$('holidayName').value.trim();if(!d)return alert('Holiday date দিন');holidays=holidays.filter(x=>x.date!==d);holidays.push({date:d,name:n||'Holiday'});updateHolidayTypes(d,true);localStorage.setItem('bivas-holidays',JSON.stringify(holidays));renderHolidayList();if(d.slice(0,7)===monthKey())renderMonth();else alert('Holiday যোগ হয়েছে। সংশ্লিষ্ট মাস খুললে Attendance Type আপডেট দেখা যাবে।')}
@@ -182,10 +201,8 @@ function download(blob,name){
   link.href=url;link.download=name;link.textContent='এখানে চাপুন: '+name;
   box.classList.remove('hidden');
   box.firstChild.textContent='CSV ফাইল তৈরি হয়েছে। Android-এ নিচের লিংকে চাপ দিয়ে Download করুন। ফাইল সাধারণত Downloads ফোল্ডারে থাকে; সেভ হওয়া নিশ্চিত করতে লিংকে চাপুন। ';
-  // স্বয়ংক্রিয় ডাউনলোডের চেষ্টা; WebView আটকালে নিচের দৃশ্যমান লিংক ব্যবহার করা যাবে।
   const a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';
   document.body.appendChild(a);a.click();a.remove();
-  // লিংকটি পেজ খোলা থাকা পর্যন্ত সক্রিয় থাকবে, যাতে পরে চাপা যায়।
  }catch(err){
   const reader=new FileReader();reader.onload=()=>{link.href=reader.result;link.download=name;link.textContent='এখানে চাপুন: '+name;box.classList.remove('hidden')};
   reader.readAsDataURL(blob);
@@ -206,4 +223,5 @@ SET_KEYS.forEach(k=>{
 });
 init();
 </script>
-</body></html>
+</body>
+</html>
