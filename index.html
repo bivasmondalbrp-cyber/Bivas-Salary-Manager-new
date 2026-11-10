@@ -20,8 +20,6 @@ button.secondary{background:#e4ebf3;color:#18324e}button.danger{background:#b423
 .stat{background:#f4f7fb;border-radius:8px;padding:10px}.stat b{display:block;font-size:17px;margin-top:5px}
 .row{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.row>*{flex:1;min-width:100px}
 .tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12px;min-width:720px}
-#attendance tr{scroll-margin-top:10px}#attendance td:first-child{font-weight:700;white-space:nowrap}
-@media(max-width:600px){.tablewrap{overflow-x:visible}table{min-width:0;font-size:11px}th,td{padding:5px 3px}td input,td select{min-width:0;width:100%;padding:6px 2px;font-size:11px}#attendance td:first-child{font-size:13px}}
 th,td{border-bottom:1px solid #e3e8ef;padding:8px;text-align:left}th{background:#edf2f8}
 td input,td select{min-width:100px;padding:7px}.muted{font-size:12px;color:#667085;line-height:1.5}
 .good{color:var(--green)}.bad{color:var(--red)}.actions{display:flex;flex-wrap:wrap}.hidden{display:none}
@@ -37,7 +35,7 @@ td input,td select{min-width:100px;padding:7px}.muted{font-size:12px;color:#6670
 <h2>মাস ও বেতনের সেটিংস</h2>
 <div class="grid">
 <div><label>বছর</label><input id="year" type="number" value="2026"></div>
-<div><label>মাস</label><select id="month"></select></div>
+<div><label>মাস নির্বাচন করুন</label><select id="month" aria-label="মাস নির্বাচন করুন" onchange="renderMonth()"><option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option></select></div>
 <div><label>মাসিক Basic Salary (₹)</label><input id="salary" type="number" value="23625" step="0.01"></div>
 <div><label>প্রতিদিনের Duty Hours</label><input id="dailyHours" type="number" value="9" step="0.25"></div>
 <div><label>সর্বোচ্চ CL Adjustment (ঘণ্টা)</label><input id="clHours" type="number" value="18" step="0.25"></div>
@@ -56,8 +54,7 @@ td input,td select{min-width:100px;padding:7px}.muted{font-size:12px;color:#6670
 <p class="muted">Holiday যোগ বা মুছলে সংশ্লিষ্ট তারিখের Attendance Type স্বয়ংক্রিয়ভাবে আপডেট হবে।</p>
 </section>
 <section class="card">
-<h2>দৈনিক Attendance Entry (১–৩১)</h2>
-<p class="notice">মাস ও বছর নির্বাচন করে “মাসের ক্যালেন্ডার তৈরি / আপডেট” চাপুন। নিচে প্রতিদিনের ১, ২, ৩ … ৩০/৩১ নম্বর সারিতে Entry করুন। মাসভেদে দিনের সংখ্যা নিজে থেকে ঠিক হবে।</p>
+<h2>দৈনিক Attendance Entry</h2>
 <p class="notice">In Time / Out Time পরিবর্তন করতে Password দিতে হবে। প্রথমবার সময় সম্পাদনা করলে নিজের Password তৈরি করুন।</p>
 <div class="tablewrap"><table><thead><tr><th>তারিখ</th><th>দিন</th><th>ধরন</th><th>In Time</th><th>Out Time</th><th>Worked</th><th>Regular</th><th>OT</th></tr></thead><tbody id="attendance"></tbody></table></div>
 </section>
@@ -67,12 +64,15 @@ td input,td select{min-width:100px;padding:7px}.muted{font-size:12px;color:#6670
 <button onclick="saveData()">ডেটা Save</button><button class="secondary" onclick="exportCSV()">Excel / CSV Download</button><button class="secondary" onclick="backup()">Backup</button><button class="secondary" onclick="$('restorePick').click()">Backup Restore</button>
 <input id="restorePick" class="hidden" type="file" accept="application/json" onchange="restore(event)">
 </div>
+<div id="downloadFallback" class="notice hidden" style="margin-top:10px">
+  Android-এ ফাইল নিজে থেকে Download না হলে নিচের লিংকে চাপ দিন:
+  <a id="downloadLink" href="#" download style="display:block;margin-top:7px;font-weight:700;overflow-wrap:anywhere">ফাইল Download</a>
+</div>
 <p class="muted">1st Payment = Basic − EPF − Mediclaim − Professional Tax − CL সমন্বয়ের পর Shortfall Deduction। 2nd Payment = OT Amount।</p>
-<div id="downloadFallback" class="notice hidden" style="margin-top:10px">ডাউনলোড শুরু না হলে নিচের ফাইলের লিংকে চাপ দিন: <a id="downloadLink" href="#" download style="display:block;margin-top:8px;word-break:break-all">CSV ফাইল</a></div>
 </section>
 <section class="card">
 <h2>আগের মাসের হিসাব</h2>
-<div class="row"><div><label>বছর</label><input id="historyYear" type="number" value="2026"></div><div><label>মাস</label><select id="historyMonth"></select></div><div style="flex:0"><button onclick="showHistory()">হিসাব দেখুন</button></div></div>
+<div class="row"><div><label>বছর</label><input id="historyYear" type="number" value="2026"></div><div><label>মাস</label><select id="historyMonth" aria-label="আগের মাস নির্বাচন করুন"><option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option></select></div><div style="flex:0"><button onclick="showHistory()">হিসাব দেখুন</button></div></div>
 <div id="historyResult" class="muted">মাস নির্বাচন করে হিসাব দেখুন।</div>
 </section>
 </main>
@@ -91,8 +91,8 @@ function fmtTime(hours){let mins=Math.round(Math.max(0,hours)*60);return `${Math
 function hashPassword(p){let h=2166136261;for(let i=0;i<p.length;i++){h^=p.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16)}
 function ensurePassword(){let stored=localStorage.getItem('bivas-time-password');if(!stored){let p=prompt('In/Out Time সম্পাদনার জন্য নতুন Password তৈরি করুন:');if(!p)return false;if(p.length<4){alert('কমপক্ষে ৪ অক্ষরের Password দিন।');return false}localStorage.setItem('bivas-time-password',hashPassword(p));alert('Password তৈরি হয়েছে।');return true}let p=prompt('In/Out Time সম্পাদনার Password দিন:');if(p===null)return false;if(hashPassword(p)!==stored){alert('ভুল Password। সময় পরিবর্তন করা হয়নি।');return false}return true}
 function changePassword(){let old=localStorage.getItem('bivas-time-password');if(old){let p=prompt('বর্তমান Password দিন:');if(p===null||hashPassword(p)!==old){alert('বর্তমান Password সঠিক নয়।');return}}let n=prompt('নতুন Password দিন (কমপক্ষে ৪ অক্ষর):');if(!n)return;if(n.length<4){alert('কমপক্ষে ৪ অক্ষরের Password দিন।');return}localStorage.setItem('bivas-time-password',hashPassword(n));alert('Password পরিবর্তন হয়েছে।')}
-function init(){
- months.forEach((m,i)=>{$('month').add(new Option(m,i));$('historyMonth').add(new Option(m,i))});
+ function init(){
+ // Both month lists are written directly in HTML; do not rebuild them with JavaScript.
  records=JSON.parse(localStorage.getItem('bivas-records')||'{}');
  holidays=JSON.parse(localStorage.getItem('bivas-holidays')||'[]');
  monthSettings=JSON.parse(localStorage.getItem('bivas-month-settings')||'{}');
@@ -118,16 +118,13 @@ function renderMonth(){
   let dt=dateKey(y,m,d),day=new Date(y,m,d).getDay(),typ=defaultType(dt,day),r=saved[dt]||{};
   if(holidayName(dt))r.type='Holiday';else if(r.type==='Holiday')r.type=day===0?'Sunday':'Normal';
   let tr=document.createElement('tr');
-  tr.innerHTML=`<td>${d}<div class="muted">${dt}</div></td><td>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]}</td><td><select data-date="${dt}" class="typ"><option ${ (r.type||typ)==='Normal'?'selected':''}>Normal</option><option ${(r.type||typ)==='Sunday'?'selected':''}>Sunday</option><option ${(r.type||typ)==='Holiday'?'selected':''}>Holiday</option><option ${(r.type||typ)==='Off'?'selected':''}>Off</option></select>${holidayName(dt)?`<div class="muted">${holidayName(dt)}</div>`:''}</td><td><input type="time" class="in" data-date="${dt}" value="${r.in||''}"></td><td><input type="time" class="out" data-date="${dt}" value="${r.out||''}"></td><td class="worked" data-date="${dt}">0 ঘ 0 মি</td><td class="regular" data-date="${dt}">0 ঘ 0 মি</td><td class="ot" data-date="${dt}">0 ঘ 0 মি</td>`;
+  tr.innerHTML=`<td>${dt}</td><td>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]}</td><td><select data-date="${dt}" class="typ"><option ${ (r.type||typ)==='Normal'?'selected':''}>Normal</option><option ${(r.type||typ)==='Sunday'?'selected':''}>Sunday</option><option ${(r.type||typ)==='Holiday'?'selected':''}>Holiday</option><option ${(r.type||typ)==='Off'?'selected':''}>Off</option></select>${holidayName(dt)?`<div class="muted">${holidayName(dt)}</div>`:''}</td><td><input type="time" class="in" data-date="${dt}" value="${r.in||''}"></td><td><input type="time" class="out" data-date="${dt}" value="${r.out||''}"></td><td class="worked" data-date="${dt}">0 ঘ 0 মি</td><td class="regular" data-date="${dt}">0 ঘ 0 মি</td><td class="ot" data-date="${dt}">0 ঘ 0 মি</td>`;
   tb.appendChild(tr);
  }
  document.querySelectorAll('#attendance input[type=time]').forEach(el=>{
   el.dataset.last=el.value;
   el.addEventListener('focus',()=>{authorizedTimeEdit=ensurePassword();if(!authorizedTimeEdit){el.value=el.dataset.last;el.blur()}});
-  const commitTime=()=>{if(!authorizedTimeEdit){el.value=el.dataset.last;return}el.dataset.last=el.value;saveCurrentMonth();calculate()};
-  // Android time picker কখনও change event দেরিতে পাঠায়; input ও change দুই ক্ষেত্রেই হিসাব আপডেট হবে।
-  el.addEventListener('input',commitTime);
-  el.addEventListener('change',commitTime);
+  el.addEventListener('change',()=>{if(!authorizedTimeEdit){el.value=el.dataset.last;return}el.dataset.last=el.value;saveCurrentMonth();calculate()});
   el.addEventListener('blur',()=>{if(!authorizedTimeEdit)el.value=el.dataset.last;authorizedTimeEdit=false});
  });
  document.querySelectorAll('#attendance select').forEach(el=>el.addEventListener('change',()=>{saveCurrentMonth();calculate()}));
@@ -146,21 +143,14 @@ function calculate(){
   total+=hrs;regular+=reg;rawOT+=extra;rows.push({date,hrs,reg,extra});
  }
  let required=requiredDays*num('dailyHours'),otEligible=total>=required,ot=otEligible?rawOT:0;
- rows.forEach(x=>{
-  let w=document.querySelector(`.worked[data-date="${x.date}"]`);
-  let g=document.querySelector(`.regular[data-date="${x.date}"]`);
-  let o=document.querySelector(`.ot[data-date="${x.date}"]`);
-  if(w)w.textContent=fmtTime(x.hrs);
-  if(g)g.textContent=fmtTime(x.reg);
-  if(o)o.textContent=fmtTime(otEligible?x.extra:0);
- });
+ rows.forEach(x=>{let w=$(`.worked[data-date="${x.date}"]`),g=$(`.regular[data-date="${x.date}"]`),o=$(`.ot[data-date="${x.date}"]`);if(w)w.textContent=fmtTime(x.hrs);if(g)g.textContent=fmtTime(x.reg);if(o)o.textContent=fmtTime(otEligible?x.extra:0)});
  let salary=num('salary'),daily=salary/25,hpd=num('dailyHours'),hourly=hpd>0?daily/hpd:0;
  let clAdjusted=Math.min(Math.max(0,required-total),num('clHours')),shortfall=Math.max(0,required-total-clAdjusted);
  let otAmount=ot*hourly,deduction=shortfall*hourly,first=salary-num('epf')-num('mediclaim')-num('ptax')-deduction,second=otAmount;
  let vals=[['Daily Basic',`₹${daily.toFixed(2)}`],['Hourly Rate',`₹${hourly.toFixed(2)}`],['Normal Working Days',requiredDays],['Required Duty Hours',fmtTime(required)],['Total Worked Hours',fmtTime(total)],['Regular Duty Hours',fmtTime(regular)],['Total OT',fmtTime(ot)],['OT Amount',`₹${otAmount.toFixed(2)}`],['Available CL',fmtTime(num('clHours'))],['CL Adjusted',fmtTime(clAdjusted)],['Remaining Shortfall',fmtTime(shortfall)],['Shortfall Deduction',`₹${deduction.toFixed(2)}`],['1st Payment',`₹${first.toFixed(2)}`],['2nd Payment',`₹${second.toFixed(2)}`],['TOTAL SALARY',`₹${(first+second).toFixed(2)}`]];
  $('summary').innerHTML=vals.map(([k,v])=>`<div class="stat"><label>${k}</label><b class="${k==='TOTAL SALARY'?'good':k==='Remaining Shortfall'&&shortfall>0?'bad':''}">${v}</b></div>`).join('');
 }
-function saveData(){calculate();saveCurrentMonth();saveSettings();alert('এই মাসের Attendance ও Salary Settings Save হয়েছে।')}
+ function saveData(){calculate();saveCurrentMonth();saveSettings();alert('এই মাসের Attendance ও Salary Settings Save হয়েছে।')}
 function updateHolidayTypes(date,adding){
  let y=Number(date.slice(0,4)),m=Number(date.slice(5,7))-1,d=Number(date.slice(8,10)),day=new Date(y,m,d).getDay(),k=date.slice(0,7);
  records[k]=records[k]||{};let r=records[k][date]||{in:'',out:''};
@@ -176,23 +166,22 @@ function exportCSV(){
  let csv='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\r\n');
  download(new Blob([csv],{type:'text/csv;charset=utf-8'}),`Bivas_${monthKey()}.csv`);
 }
-  function backup(){saveData();let blob=new Blob([JSON.stringify({records,holidays,monthSettings,settings:JSON.parse(localStorage.getItem('bivas-current-settings')||'{}')},null,2)],{type:'application/json'});download(blob,'Bivas_Salary_Backup.json')}
+function backup(){saveData();let blob=new Blob([JSON.stringify({records,holidays,monthSettings,settings:JSON.parse(localStorage.getItem('bivas-current-settings')||'{}')},null,2)],{type:'application/json'});download(blob,'Bivas_Salary_Backup.json')}
 function restore(e){let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{try{let d=JSON.parse(rd.result);records=d.records||{};holidays=d.holidays||[];monthSettings=d.monthSettings||{};Object.entries(d.settings||{}).forEach(([k,v])=>{if($(k))$(k).value=v});localStorage.setItem('bivas-records',JSON.stringify(records));localStorage.setItem('bivas-holidays',JSON.stringify(holidays));localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings));saveSettings();renderHolidayList();renderMonth();alert('Backup Restore হয়েছে।')}catch(err){alert('Backup ফাইলটি সঠিক নয়।')} $('restorePick').value=''};rd.readAsText(f)}
 function download(blob,name){
- // Android WebView/Chrome-এ auto-download বন্ধ থাকলেও দৃশ্যমান লিংক দিয়ে ফাইল নেওয়া যাবে।
+ // Android Chrome/WebView-এ download attribute কখনও কাজ না করলে দৃশ্যমান fallback link দেখানো হবে।
  const box=$('downloadFallback'),link=$('downloadLink');
- if(!box||!link){alert('Download link তৈরি হয়নি। পেজটি নতুন করে খুলুন।');return}
- box.classList.remove('hidden');link.download=name;link.textContent='ডাউনলোড করুন: '+name;
  try{
   const url=URL.createObjectURL(blob);
-  link.href=url;
+  link.href=url;link.download=name;link.textContent=name;box.classList.remove('hidden');
   const a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';
   document.body.appendChild(a);
-  try{a.click()}catch(e){}
+  a.click();
   setTimeout(()=>a.remove(),1500);
-  setTimeout(()=>URL.revokeObjectURL(url),10*60*1000);
+  // Link-টি ২ মিনিট সক্রিয় থাকবে, যাতে Android-এ পরে ট্যাপ করলেও ফাইল পাওয়া যায়।
+  setTimeout(()=>URL.revokeObjectURL(url),120000);
  }catch(err){
-  const reader=new FileReader();reader.onload=()=>{link.href=reader.result;box.classList.remove('hidden')};reader.onerror=()=>alert('ফাইল তৈরি করা যায়নি। আবার চেষ্টা করুন।');reader.readAsDataURL(blob);
+  const reader=new FileReader();reader.onload=()=>{link.href=reader.result;link.download=name;link.textContent=name;box.classList.remove('hidden')};reader.readAsDataURL(blob);
  }
 }
 function showHistory(){
