@@ -56,7 +56,7 @@ td input,td select{min-width:100px;padding:7px}.muted{font-size:12px;color:#6670
 <section class="card">
 <h2>দৈনিক Attendance Entry</h2>
 <p class="notice">In Time / Out Time পরিবর্তন করতে Password দিতে হবে। প্রথমবার সময় সম্পাদনা করলে নিজের Password তৈরি করুন।</p>
-<div class="tablewrap"><table><thead><tr><th>তারিখ</th><th>দিন</th><th>ধরন</th><th>In Time</th><th>Out Time</th><th>Worked</th><th>Regular</th><th>OT</th></tr></thead><tbody id="attendance"></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>তারিখ</th><th>দিন</th><th>ধরন</th><th>In Time</th><th>Out Time</th><th>Worked</th><th>OT</th></tr></thead><tbody id="attendance"></tbody></table></div>
 </section>
 <section class="card">
 <h2>Salary Summary</h2><div class="grid" id="summary"></div>
@@ -78,7 +78,7 @@ td input,td select{min-width:100px;padding:7px}.muted{font-size:12px;color:#6670
 </main>
 <script>
 const $=id=>document.getElementById(id);
-  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const SET_KEYS=['salary','dailyHours','clHours','epf','mediclaim','ptax'];
 let records={},holidays=[],monthSettings={},displayedMonthKey=null,authorizedTimeEdit=false;
 const monthKey=()=>`${$('year').value}-${String(+$('month').value+1).padStart(2,'0')}`;
@@ -108,7 +108,7 @@ function defaultType(date,day){return holidayName(date)?'Holiday':day===0?'Sunda
 function renderMonth(){
  let yr=Number($('year').value),mo=Number($('month').value);
  if(!Number.isInteger(yr)||yr<2000||yr>2100||!Number.isInteger(mo)||mo<0||mo>11){alert('সঠিক বছর ও মাস নির্বাচন করুন।');return}
- if($('attendance').children.length&&displayedMonthKey){readRecords(displayedMonthKey);monthSettings[displayedMonthKey]=settingsObject();localStorage.setItem('bivas-records',JSON.stringify(records));localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings))}
+   if($('attendance').children.length&&displayedMonthKey){readRecords(displayedMonthKey);monthSettings[displayedMonthKey]=settingsObject();localStorage.setItem('bivas-records',JSON.stringify(records));localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings))}
  let target=monthKey();if(displayedMonthKey!==target)applyMonthSettings(target);
  if(!monthSettings[target])monthSettings[target]=settingsObject();
  displayedMonthKey=target;saveSettings();
@@ -118,7 +118,7 @@ function renderMonth(){
   let dt=dateKey(y,m,d),day=new Date(y,m,d).getDay(),typ=defaultType(dt,day),r=saved[dt]||{};
   if(holidayName(dt))r.type='Holiday';else if(r.type==='Holiday')r.type=day===0?'Sunday':'Normal';
   let tr=document.createElement('tr');
-  tr.innerHTML=`<td>${dt}</td><td>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]}</td><td><select data-date="${dt}" class="typ"><option ${ (r.type||typ)==='Normal'?'selected':''}>Normal</option><option ${(r.type||typ)==='Sunday'?'selected':''}>Sunday</option><option ${(r.type||typ)==='Holiday'?'selected':''}>Holiday</option><option ${(r.type||typ)==='Off'?'selected':''}>Off</option></select>${holidayName(dt)?`<div class="muted">${holidayName(dt)}</div>`:''}</td><td><input type="time" class="in" data-date="${dt}" value="${r.in||''}"></td><td><input type="time" class="out" data-date="${dt}" value="${r.out||''}"></td><td class="worked" data-date="${dt}">0 ঘ 0 মি</td><td class="regular" data-date="${dt}">0 ঘ 0 মি</td><td class="ot" data-date="${dt}">0 ঘ 0 মি</td>`;
+  tr.innerHTML=`<td>${dt}</td><td>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]}</td><td><select data-date="${dt}" class="typ"><option ${ (r.type||typ)==='Normal'?'selected':''}>Normal</option><option ${(r.type||typ)==='Sunday'?'selected':''}>Sunday</option><option ${(r.type||typ)==='Holiday'?'selected':''}>Holiday</option><option ${(r.type||typ)==='Off'?'selected':''}>Off</option></select>${holidayName(dt)?`<div class="muted">${holidayName(dt)}</div>`:''}</td><td><input type="time" class="in" data-date="${dt}" value="${r.in||''}"></td><td><input type="time" class="out" data-date="${dt}" value="${r.out||''}"></td><td class="worked" data-date="${dt}">0 ঘ 0 মি</td><td class="ot" data-date="${dt}">0 ঘ 0 মি</td>`;
   tb.appendChild(tr);
  }
  document.querySelectorAll('#attendance input[type=time]').forEach(el=>{
@@ -133,62 +133,62 @@ function renderMonth(){
 function readRecords(targetKey=displayedMonthKey||monthKey()){let o={};document.querySelectorAll('#attendance tr').forEach(tr=>{let date=tr.querySelector('.typ').dataset.date;o[date]={type:tr.querySelector('.typ').value,in:tr.querySelector('.in').value,out:tr.querySelector('.out').value}});records[targetKey]=o;return o}
 function saveCurrentMonth(){if($('attendance').children.length)readRecords(displayedMonthKey||monthKey());localStorage.setItem('bivas-records',JSON.stringify(records))}
 function calculate(){
- let rs=readRecords(),requiredDays=0,total=0,regular=0,rawOT=0,rows=[];
+ let rs=readRecords(),requiredDays=0,total=0,rawOT=0,rows=[];
  for(let [date,r] of Object.entries(rs)){
   let day=new Date(date+'T12:00:00').getDay(),t=holidayName(date)?'Holiday':(r.type||defaultType(date,day)),hrs=0;
   if(r.in&&r.out){let [ih,im]=r.in.split(':').map(Number),[oh,om]=r.out.split(':').map(Number);hrs=((oh*60+om)-(ih*60+im)+1440)%1440/60}
   if(t==='Normal')requiredDays++;
-  let reg=t==='Normal'?Math.min(hrs,num('dailyHours')):0;
   let extra=(t==='Sunday'||t==='Holiday')?hrs:(t==='Normal'?Math.max(0,hrs-num('dailyHours')):0);
-  total+=hrs;regular+=reg;rawOT+=extra;rows.push({date,hrs,reg,extra});
-  }
-   let required=requiredDays*num('dailyHours'),otEligible=total>=required,ot=otEligible?rawOT:0;
+  total+=hrs;rawOT+=extra;rows.push({date,hrs,extra});
+ }
+ // দৈনিক OT আলাদাভাবে দেখানো হবে; মাসের মোট shortfall থাকলেও OT শূন্য হবে না।
+ let ot=rawOT;
  rows.forEach(x=>{
-  let w=document.querySelector(`.worked[data-date="${x.date}"]`),
-      g=document.querySelector(`.regular[data-date="${x.date}"]`),
-      o=document.querySelector(`.ot[data-date="${x.date}"]`);
+  let w=$(`.worked[data-date="${x.date}"]`),o=$(`.ot[data-date="${x.date}"]`);
   if(w)w.textContent=fmtTime(x.hrs);
-  if(g)g.textContent=fmtTime(x.reg);
-  if(o)o.textContent=fmtTime(otEligible?x.extra:0)
+  if(o)o.textContent=fmtTime(x.extra);
  });
+ let required=requiredDays*num('dailyHours');
  let salary=num('salary'),daily=salary/25,hpd=num('dailyHours'),hourly=hpd>0?daily/hpd:0;
  let clAdjusted=Math.min(Math.max(0,required-total),num('clHours')),shortfall=Math.max(0,required-total-clAdjusted);
  let otAmount=ot*hourly,deduction=shortfall*hourly,first=salary-num('epf')-num('mediclaim')-num('ptax')-deduction,second=otAmount;
- let vals=[['Daily Basic',`₹${daily.toFixed(2)}`],['Hourly Rate',`₹${hourly.toFixed(2)}`],['Normal Working Days',requiredDays],['Required Duty Hours',fmtTime(required)],['Total Worked Hours',fmtTime(total)],['Regular Duty Hours',fmtTime(regular)],['Total OT',fmtTime(ot)],['OT Amount',`₹${otAmount.toFixed(2)}`],['Available CL',fmtTime(num('clHours'))],['CL Adjusted',fmtTime(clAdjusted)],['Remaining Shortfall',fmtTime(shortfall)],['Shortfall Deduction',`₹${deduction.toFixed(2)}`],['1st Payment',`₹${first.toFixed(2)}`],['2nd Payment',`₹${second.toFixed(2)}`],['TOTAL SALARY',`₹${(first+second).toFixed(2)}`]];
+ let vals=[['Daily Basic',`₹${daily.toFixed(2)}`],['Hourly Rate',`₹${hourly.toFixed(2)}`],['Normal Working Days',requiredDays],['Required Duty Hours',fmtTime(required)],['Total Worked Hours',fmtTime(total)],['Total OT',fmtTime(ot)],['OT Amount',`₹${otAmount.toFixed(2)}`],['Available CL',fmtTime(num('clHours'))],['CL Adjusted',fmtTime(clAdjusted)],['Remaining Shortfall',fmtTime(shortfall)],['Shortfall Deduction',`₹${deduction.toFixed(2)}`],['1st Payment',`₹${first.toFixed(2)}`],['2nd Payment',`₹${second.toFixed(2)}`],['TOTAL SALARY',`₹${(first+second).toFixed(2)}`]];
  $('summary').innerHTML=vals.map(([k,v])=>`<div class="stat"><label>${k}</label><b class="${k==='TOTAL SALARY'?'good':k==='Remaining Shortfall'&&shortfall>0?'bad':''}">${v}</b></div>`).join('');
 }
 function saveData(){calculate();saveCurrentMonth();saveSettings();alert('এই মাসের Attendance ও Salary Settings Save হয়েছে।')}
 function updateHolidayTypes(date,adding){
  let y=Number(date.slice(0,4)),m=Number(date.slice(5,7))-1,d=Number(date.slice(8,10)),day=new Date(y,m,d).getDay(),k=date.slice(0,7);
  records[k]=records[k]||{};let r=records[k][date]||{in:'',out:''};
- if(adding)r.type='Holiday';else if(r.type==='Holiday')r.type=day===0?'Sunday':'Normal';
+ if(adding)r.type='Holiday';
+   else if(r.type==='Holiday')r.type=day===0?'Sunday':'Normal';
  records[k][date]=r;localStorage.setItem('bivas-records',JSON.stringify(records));
 }
 function addHoliday(){let d=$('holidayDate').value,n=$('holidayName').value.trim();if(!d)return alert('Holiday date দিন');holidays=holidays.filter(x=>x.date!==d);holidays.push({date:d,name:n||'Holiday'});updateHolidayTypes(d,true);localStorage.setItem('bivas-holidays',JSON.stringify(holidays));renderHolidayList();if(d.slice(0,7)===monthKey())renderMonth();else alert('Holiday যোগ হয়েছে। সংশ্লিষ্ট মাস খুললে Attendance Type আপডেট দেখা যাবে।')}
 function removeHoliday(d){holidays=holidays.filter(x=>x.date!==d);updateHolidayTypes(d,false);localStorage.setItem('bivas-holidays',JSON.stringify(holidays));renderHolidayList();if(d.slice(0,7)===monthKey())renderMonth();else alert('Holiday মুছে দেওয়া হয়েছে। সংশ্লিষ্ট মাস খুললে Type আপডেট দেখা যাবে।')}
 function renderHolidayList(){$('holidayList').innerHTML=holidays.sort((a,b)=>a.date.localeCompare(b.date)).map(h=>`<div class="holiday">${h.date} — ${h.name} <button class="danger" onclick="removeHoliday('${h.date}')">মুছুন</button></div>`).join('')||'<p class="muted">কোনও Holiday যোগ করা হয়নি।</p>'}
 function exportCSV(){
- calculate();saveCurrentMonth();let rows=[['BIVAS SALARY MANAGER',months[+$('month').value]+' '+$('year').value],['Basic Salary',num('salary')],['Daily Duty Hours',num('dailyHours')],[],['Date','Day','Type','In','Out','Worked Hours','Regular Hours','OT Hours']];
- document.querySelectorAll('#attendance tr').forEach(tr=>{let c=tr.querySelectorAll('td');rows.push([c[0].textContent,c[1].textContent,c[2].querySelector('select').value,c[3].querySelector('input').value,c[4].querySelector('input').value,c[5].textContent,c[6].textContent,c[7].textContent])});
+ calculate();saveCurrentMonth();let rows=[['BIVAS SALARY MANAGER',months[+$('month').value]+' '+$('year').value],['Basic Salary',num('salary')],['Daily Duty Hours',num('dailyHours')],[],['Date','Day','Type','In','Out','Worked Hours','OT Hours']];
+ document.querySelectorAll('#attendance tr').forEach(tr=>{let c=tr.querySelectorAll('td');rows.push([c[0].textContent,c[1].textContent,c[2].querySelector('select').value,c[3].querySelector('input').value,c[4].querySelector('input').value,c[5].textContent,c[6].textContent])});
  let csv='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\r\n');
  download(new Blob([csv],{type:'text/csv;charset=utf-8'}),`Bivas_${monthKey()}.csv`);
 }
 function backup(){saveData();let blob=new Blob([JSON.stringify({records,holidays,monthSettings,settings:JSON.parse(localStorage.getItem('bivas-current-settings')||'{}')},null,2)],{type:'application/json'});download(blob,'Bivas_Salary_Backup.json')}
 function restore(e){let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{try{let d=JSON.parse(rd.result);records=d.records||{};holidays=d.holidays||[];monthSettings=d.monthSettings||{};Object.entries(d.settings||{}).forEach(([k,v])=>{if($(k))$(k).value=v});localStorage.setItem('bivas-records',JSON.stringify(records));localStorage.setItem('bivas-holidays',JSON.stringify(holidays));localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings));saveSettings();renderHolidayList();renderMonth();alert('Backup Restore হয়েছে।')}catch(err){alert('Backup ফাইলটি সঠিক নয়।')} $('restorePick').value=''};rd.readAsText(f)}
 function download(blob,name){
- // Android Chrome/WebView-এ download attribute কখনও কাজ না করলে দৃশ্যমান fallback link দেখানো হবে।
  const box=$('downloadFallback'),link=$('downloadLink');
  try{
-  const url=URL.createObjectURL(blob);
-  link.href=url;link.download=name;link.textContent=name;box.classList.remove('hidden');
+  if(window.__bivasDownloadUrl)URL.revokeObjectURL(window.__bivasDownloadUrl);
+  const url=URL.createObjectURL(blob);window.__bivasDownloadUrl=url;
+  link.href=url;link.download=name;link.textContent='এখানে চাপুন: '+name;
+  box.classList.remove('hidden');
+  box.firstChild.textContent='CSV ফাইল তৈরি হয়েছে। Android-এ নিচের লিংকে চাপ দিয়ে Download করুন। ফাইল সাধারণত Downloads ফোল্ডারে থাকে; সেভ হওয়া নিশ্চিত করতে লিংকে চাপুন। ';
+  // স্বয়ংক্রিয় ডাউনলোডের চেষ্টা; WebView আটকালে নিচের দৃশ্যমান লিংক ব্যবহার করা যাবে।
   const a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(()=>a.remove(),1500);
-  // Link-টি ২ মিনিট সক্রিয় থাকবে, যাতে Android-এ পরে ট্যাপ করলেও ফাইল পাওয়া যায়।
-  setTimeout(()=>URL.revokeObjectURL(url),120000);
+  document.body.appendChild(a);a.click();a.remove();
+  // লিংকটি পেজ খোলা থাকা পর্যন্ত সক্রিয় থাকবে, যাতে পরে চাপা যায়।
  }catch(err){
-  const reader=new FileReader();reader.onload=()=>{link.href=reader.result;link.download=name;link.textContent=name;box.classList.remove('hidden')};reader.readAsDataURL(blob);
+  const reader=new FileReader();reader.onload=()=>{link.href=reader.result;link.download=name;link.textContent='এখানে চাপুন: '+name;box.classList.remove('hidden')};
+  reader.readAsDataURL(blob);
  }
 }
 function showHistory(){
@@ -196,8 +196,8 @@ function showHistory(){
  if(!r){$('historyResult').textContent='এই মাসের কোনো Save করা ডেটা পাওয়া যায়নি।';return}
  let cfg=monthSettings[k]||{},dh=Math.max(0,Number(cfg.dailyHours??$('dailyHours').value)||0),total=0,ot=0,days=0;
  for(let [d,x] of Object.entries(r)){if(x.type==='Normal')days++;if(x.in&&x.out){let [a,b]=x.in.split(':').map(Number),[c,e]=x.out.split(':').map(Number),h=((c*60+e)-(a*60+b)+1440)%1440/60;total+=h;let day=new Date(d+'T12:00:00').getDay();ot+=(x.type==='Sunday'||x.type==='Holiday')?h:(x.type==='Normal'?Math.max(0,h-dh):0)}}
- let required=days*dh,shownOT=total>=required?ot:0;
- $('historyResult').textContent=`${months[m]} ${y}: Normal Days ${days}, Worked ${fmtTime(total)}, Required ${fmtTime(required)}, OT ${fmtTime(shownOT)}। Salary: ₹${cfg.salary??'সেট করা নেই'}; Daily Duty: ${dh} ঘণ্টা।`
+ let required=days*dh;
+ $('historyResult').textContent=`${months[m]} ${y}: Normal Days ${days}, Worked ${fmtTime(total)}, Required ${fmtTime(required)}, OT ${fmtTime(ot)}। Salary: ₹${cfg.salary??'সেট করা নেই'}; Daily Duty: ${dh} ঘণ্টা।`
 }
 $('year').addEventListener('change',renderMonth);$('month').addEventListener('change',renderMonth);
 SET_KEYS.forEach(k=>{
