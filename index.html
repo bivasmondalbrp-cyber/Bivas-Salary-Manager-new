@@ -78,7 +78,7 @@ td input,td select{min-width:100px;padding:7px}.muted{font-size:12px;color:#6670
 </main>
 <script>
 const $=id=>document.getElementById(id);
-const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const SET_KEYS=['salary','dailyHours','clHours','epf','mediclaim','ptax'];
 let records={},holidays=[],monthSettings={},displayedMonthKey=null,authorizedTimeEdit=false;
 const monthKey=()=>`${$('year').value}-${String(+$('month').value+1).padStart(2,'0')}`;
@@ -91,7 +91,7 @@ function fmtTime(hours){let mins=Math.round(Math.max(0,hours)*60);return `${Math
 function hashPassword(p){let h=2166136261;for(let i=0;i<p.length;i++){h^=p.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16)}
 function ensurePassword(){let stored=localStorage.getItem('bivas-time-password');if(!stored){let p=prompt('In/Out Time সম্পাদনার জন্য নতুন Password তৈরি করুন:');if(!p)return false;if(p.length<4){alert('কমপক্ষে ৪ অক্ষরের Password দিন।');return false}localStorage.setItem('bivas-time-password',hashPassword(p));alert('Password তৈরি হয়েছে।');return true}let p=prompt('In/Out Time সম্পাদনার Password দিন:');if(p===null)return false;if(hashPassword(p)!==stored){alert('ভুল Password। সময় পরিবর্তন করা হয়নি।');return false}return true}
 function changePassword(){let old=localStorage.getItem('bivas-time-password');if(old){let p=prompt('বর্তমান Password দিন:');if(p===null||hashPassword(p)!==old){alert('বর্তমান Password সঠিক নয়।');return}}let n=prompt('নতুন Password দিন (কমপক্ষে ৪ অক্ষর):');if(!n)return;if(n.length<4){alert('কমপক্ষে ৪ অক্ষরের Password দিন।');return}localStorage.setItem('bivas-time-password',hashPassword(n));alert('Password পরিবর্তন হয়েছে।')}
- function init(){
+function init(){
  // Both month lists are written directly in HTML; do not rebuild them with JavaScript.
  records=JSON.parse(localStorage.getItem('bivas-records')||'{}');
  holidays=JSON.parse(localStorage.getItem('bivas-holidays')||'[]');
@@ -141,16 +141,23 @@ function calculate(){
   let reg=t==='Normal'?Math.min(hrs,num('dailyHours')):0;
   let extra=(t==='Sunday'||t==='Holiday')?hrs:(t==='Normal'?Math.max(0,hrs-num('dailyHours')):0);
   total+=hrs;regular+=reg;rawOT+=extra;rows.push({date,hrs,reg,extra});
- }
- let required=requiredDays*num('dailyHours'),otEligible=total>=required,ot=otEligible?rawOT:0;
- rows.forEach(x=>{let w=$(`.worked[data-date="${x.date}"]`),g=$(`.regular[data-date="${x.date}"]`),o=$(`.ot[data-date="${x.date}"]`);if(w)w.textContent=fmtTime(x.hrs);if(g)g.textContent=fmtTime(x.reg);if(o)o.textContent=fmtTime(otEligible?x.extra:0)});
+  }
+   let required=requiredDays*num('dailyHours'),otEligible=total>=required,ot=otEligible?rawOT:0;
+ rows.forEach(x=>{
+  let w=document.querySelector(`.worked[data-date="${x.date}"]`),
+      g=document.querySelector(`.regular[data-date="${x.date}"]`),
+      o=document.querySelector(`.ot[data-date="${x.date}"]`);
+  if(w)w.textContent=fmtTime(x.hrs);
+  if(g)g.textContent=fmtTime(x.reg);
+  if(o)o.textContent=fmtTime(otEligible?x.extra:0)
+ });
  let salary=num('salary'),daily=salary/25,hpd=num('dailyHours'),hourly=hpd>0?daily/hpd:0;
  let clAdjusted=Math.min(Math.max(0,required-total),num('clHours')),shortfall=Math.max(0,required-total-clAdjusted);
  let otAmount=ot*hourly,deduction=shortfall*hourly,first=salary-num('epf')-num('mediclaim')-num('ptax')-deduction,second=otAmount;
  let vals=[['Daily Basic',`₹${daily.toFixed(2)}`],['Hourly Rate',`₹${hourly.toFixed(2)}`],['Normal Working Days',requiredDays],['Required Duty Hours',fmtTime(required)],['Total Worked Hours',fmtTime(total)],['Regular Duty Hours',fmtTime(regular)],['Total OT',fmtTime(ot)],['OT Amount',`₹${otAmount.toFixed(2)}`],['Available CL',fmtTime(num('clHours'))],['CL Adjusted',fmtTime(clAdjusted)],['Remaining Shortfall',fmtTime(shortfall)],['Shortfall Deduction',`₹${deduction.toFixed(2)}`],['1st Payment',`₹${first.toFixed(2)}`],['2nd Payment',`₹${second.toFixed(2)}`],['TOTAL SALARY',`₹${(first+second).toFixed(2)}`]];
  $('summary').innerHTML=vals.map(([k,v])=>`<div class="stat"><label>${k}</label><b class="${k==='TOTAL SALARY'?'good':k==='Remaining Shortfall'&&shortfall>0?'bad':''}">${v}</b></div>`).join('');
 }
- function saveData(){calculate();saveCurrentMonth();saveSettings();alert('এই মাসের Attendance ও Salary Settings Save হয়েছে।')}
+function saveData(){calculate();saveCurrentMonth();saveSettings();alert('এই মাসের Attendance ও Salary Settings Save হয়েছে।')}
 function updateHolidayTypes(date,adding){
  let y=Number(date.slice(0,4)),m=Number(date.slice(5,7))-1,d=Number(date.slice(8,10)),day=new Date(y,m,d).getDay(),k=date.slice(0,7);
  records[k]=records[k]||{};let r=records[k][date]||{in:'',out:''};
