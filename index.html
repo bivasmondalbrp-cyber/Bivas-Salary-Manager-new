@@ -1149,10 +1149,25 @@ function calculate(){
 
  /* SECOND PAYMENT */
 
-let second=Math.max(
-  0,
-  (total+clAdjusted-required)*hourly
-);
+let second=0;
+
+if(total>=totalRegular){
+
+  // NEW FORMULA
+  second=Math.max(
+    0,
+    (summaryOT+availableCL)*hourly
+  );
+
+}else{
+
+  // OLD FORMULA
+  second=Math.max(
+    0,
+    (total+clAdjusted-required)*hourly
+  );
+
+}
 
 
  /* TOTAL PAYMENT */
