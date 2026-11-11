@@ -1149,7 +1149,10 @@ function calculate(){
 
  /* SECOND PAYMENT */
 
- let second=summaryOT*hourly;
+let second=Math.max(
+  0,
+  (total+clAdjusted-required)*hourly
+);
 
 
  /* TOTAL PAYMENT */
