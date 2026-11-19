@@ -1439,111 +1439,264 @@ function exportExcel(){
 }
 
 
-/* BACKUP */
 
-function backup(){
+/* ===== BACKUP & RESTORE ===== */
 
- saveCurrentMonth();
-
- let data={
-
-  records:records,
-  holidays:holidays,
-  monthSettings:monthSettings,
-  currentSettings:settingsObject()
-
- };
-
- let blob=new Blob(
-  [JSON.stringify(data,null,2)],
-  {type:'application/json'}
- );
-
- let url=URL.createObjectURL(blob);
-
- let a=document.createElement('a');
-
- a.href=url;
- a.download='BIVAS_SALARY_BACKUP.json';
-
- document.body.appendChild(a);
-
- a.click();
-
- a.remove();
-
- setTimeout(()=>URL.revokeObjectURL(url),60000);
-
-}
-
-
-/* RESTORE */
-
-function restore(event){
-
- let file=event.target.files[0];
-
- if(!file)return;
-
- let reader=new FileReader();
-
- reader.onload=function(){
+async function backup(){
 
   try{
 
-   let data=JSON.parse(reader.result);
+    // Save current month first
+    saveCurrentMonth();
 
-   if(!data.records){
+    const data = {
+      app: 'BIVAS SALARY MANAGER',
+      backupVersion: 1,
+      createdAt: new Date().toISOString(),
+      records: records,
+      holidays: holidays,
+      monthSettings: monthSettings,
+      currentSettings: settingsObject()
+    };
 
-    throw new Error('Invalid backup');
+    const json = JSON.stringify(data,null,2);
 
-   }
+    const filename =
+      `BIVAS_SALARY_BACKUP_${new Date().toISOString().slice(0,10)}.json`;
 
-   records=data.records||{};
-   holidays=data.holidays||[];
-   monthSettings=data.monthSettings||{};
-
-   localStorage.setItem(
-    'bivas-records',
-    JSON.stringify(records)
-   );
-
-   localStorage.setItem(
-    'bivas-holidays',
-    JSON.stringify(holidays)
-   );
-
-   localStorage.setItem(
-    'bivas-month-settings',
-    JSON.stringify(monthSettings)
-   );
-
-   if(data.currentSettings){
-
-    localStorage.setItem(
-     'bivas-current-settings',
-     JSON.stringify(data.currentSettings)
+    const file = new File(
+      [json],
+      filename,
+      {type:'application/json'}
     );
 
-   }
+    // Android native Share option
+    if(
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({files:[file]})
+    ){
 
-   alert('Backup Restore হয়েছে।');
+      try{
 
-   location.reload();
+        await navigator.share({
+          title:'BIVAS SALARY MANAGER Backup',
+          text:'Save your backup file',
+          files:[file]
+        });
 
-  }catch(e){
+        alert('Backup Share হয়েছে। Save বা Files নির্বাচন করুন।');
+        return;
 
-   alert('Backup File সঠিক নয়।');
+      }catch(err){
+
+        if(err.name==='AbortError') return;
+
+        console.warn(err);
+
+      }
+
+    }
+
+    // Browser Download fallback
+    const blob = new Blob(
+      [json],
+      {type:'application/json;charset=utf-8'}
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = $('downloadLink');
+    const fallback = $('downloadFallback');
+
+    if(link && fallback){
+
+      link.href=url;
+      link.download=filename;
+      link.textContent='Backup ফাইল Download করুন';
+
+      fallback.classList.remove('hidden');
+
+    }
+
+    const a=document.createElement('a');
+
+    a.href=url;
+    a.download=filename;
+
+    document.body.appendChild(a);
+
+    a.click();
+    a.remove();
+
+    alert(
+      'Backup তৈরি হয়েছে। Download না হলে নিচের Download লিংকে চাপ দিন।'
+    );
+
+    setTimeout(()=>{
+      URL.revokeObjectURL(url);
+    },300000);
+
+  }catch(err){
+
+    console.error(err);
+
+    alert('Backup ব্যর্থ হয়েছে: '+err.message);
 
   }
 
- };
+}
 
- reader.readAsText(file);
 
- event.target.value='';
+/* ===== RESTORE ===== */
+
+function restore(event){
+
+  const input=event.target;
+  const file=input.files[0];
+
+  if(!file) return;
+
+  const reader=new FileReader();
+
+  reader.onerror=function(){
+
+    alert('Backup ফাইল পড়া যায়নি।');
+
+    input.value='';
+
+  };
+
+  reader.onload=function(){
+
+    try{
+
+      const data=JSON.parse(reader.result);
+
+      // Validate backup data
+      if(
+        !data ||
+        typeof data.records!=='object' ||
+        !data.records ||
+        Array.isArray(data.records)
+      ){
+
+        throw new Error('Backup records সঠিক নয়।');
+
+      }
+
+      if(
+        data.holidays!==undefined &&
+        !Array.isArray(data.holidays)
+      ){
+
+        throw new Error('Holiday data সঠিক নয়।');
+
+      }
+
+      if(
+        data.monthSettings!==undefined &&
+        (
+          !data.monthSettings ||
+          typeof data.monthSettings!=='object' ||
+          Array.isArray(data.monthSettings)
+        )
+      ){
+
+        throw new Error('Month Settings সঠিক নয়।');
+
+      }
+
+      if(!confirm(
+        'বর্তমান Attendance ও Settings পরিবর্তিত হবে। Restore করবেন?'
+      )){
+
+        input.value='';
+        return;
+
+      }
+
+      const changes={
+
+        'bivas-records':
+          JSON.stringify(data.records),
+
+        'bivas-holidays':
+          JSON.stringify(data.holidays||[]),
+
+        'bivas-month-settings':
+          JSON.stringify(data.monthSettings||{})
+
+      };
+
+      if(data.currentSettings){
+
+        changes['bivas-current-settings'] =
+          JSON.stringify(data.currentSettings);
+
+      }
+
+      // Keep previous data for rollback
+      const oldValues={};
+
+      Object.keys(changes).forEach(key=>{
+
+        oldValues[key]=localStorage.getItem(key);
+
+      });
+
+      try{
+
+        Object.keys(changes).forEach(key=>{
+
+          localStorage.setItem(key,changes[key]);
+
+        });
+
+      }catch(err){
+
+        Object.keys(changes).forEach(key=>{
+
+          if(oldValues[key]===null){
+
+            localStorage.removeItem(key);
+
+          }else{
+
+            localStorage.setItem(key,oldValues[key]);
+
+          }
+
+        });
+
+        throw err;
+
+      }
+
+      alert('Backup Restore সফল হয়েছে।');
+
+      location.reload();
+
+    }catch(err){
+
+      console.error(err);
+
+      alert('Restore ব্যর্থ হয়েছে: '+err.message);
+
+    }finally{
+
+      input.value='';
+
+    }
+
+  };
+
+  reader.readAsText(file);
 
 }
+
+/* ===== END BACKUP & RESTORE ===== */
+
 
 
 /* PREVIOUS MONTH HISTORY */
