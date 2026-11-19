@@ -167,7 +167,6 @@ body.dark header{
   object-fit:cover;
 }
 
-/* SLIDE-OUT MENU BAR (DRAWER) */
 .menu-overlay{
   position:fixed;
   inset:0;
@@ -200,7 +199,6 @@ body.dark header{
 .side-menu.open{
   transform:translateX(0);
 }
-
 .side-menu-header{
   background:linear-gradient(135deg,#c2410c,#f97316);
   color:#fff;
@@ -358,7 +356,6 @@ body.dark .badge{color:var(--primary-light);}
 .badge.red{background:var(--red-bg);color:var(--red);}
 .badge.amber{background:var(--amber-bg);color:var(--amber);}
 
-/* TODAY'S HIGHLIGHTED QUICK ENTRY CARD (LIGHT ORANGE THEME) */
 .today-card{
   background:linear-gradient(135deg,#fff7ed 0%,#ffffff 100%);
   border:2px solid #f97316;
@@ -433,7 +430,6 @@ body.dark .today-date-text{color:var(--primary-light);}
   margin-top:2px;
 }
 
-/* BEAUTIFUL LIVE SALARY DASHBOARD (ORANGE GRADIENT) */
 .dash-hero{
   background:radial-gradient(circle at top right,#fb923c 0%,#ea580c 52%,#9a3412 100%);
   color:#fff;
@@ -543,7 +539,7 @@ body.dark .dash-hero{
   background:linear-gradient(90deg,#fde047,#4ade80);
   border-radius:10px;
   transition:width 0.35s ease;
-  }
+}
 
 .dash-kpi-grid{
   display:grid;
@@ -758,7 +754,6 @@ tr.Sunday td{background:var(--sun-row);}
 tr.holiday-row td{background:var(--hol-row);}
 tr.today-row td{background:var(--today-row);font-weight:600;}
 
-/* ATTRACTIVE MY PROFILE STYLING */
 .id-banner-card{
   background:linear-gradient(135deg,#c2410c 0%,#ea580c 55%,#fb923c 100%);
   color:#fff;
@@ -795,20 +790,9 @@ body.dark .id-banner-card{
   box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 .profile-photo-box img{width:100%;height:100%;object-fit:cover;}
-.id-banner-info{
-  flex:1;
-  min-width:180px;
-}
-.id-banner-name{
-  font-size:20px;
-  font-weight:800;
-  line-height:1.2;
-}
-.id-banner-meta{
-  font-size:12.5px;
-  opacity:0.92;
-  margin-top:4px;
-}
+.id-banner-info{flex:1;min-width:180px;}
+.id-banner-name{font-size:20px;font-weight:800;line-height:1.2;}
+.id-banner-meta{font-size:12.5px;opacity:0.92;margin-top:4px;}
 .id-company-tag{
   display:inline-block;
   margin-top:7px;
@@ -832,17 +816,8 @@ body.dark .id-banner-card{
   padding:9px 10px;
   text-align:center;
 }
-.p-stat-box span{
-  display:block;
-  font-size:11px;
-  color:var(--muted);
-}
-.p-stat-box b{
-  display:block;
-  font-size:14px;
-  color:var(--primary-dark);
-  margin-top:2px;
-}
+.p-stat-box span{display:block;font-size:11px;color:var(--muted);}
+.p-stat-box b{display:block;font-size:14px;color:var(--primary-dark);margin-top:2px;}
 body.dark .p-stat-box b{color:var(--primary-light);}
 .sub-group-card{
   background:var(--surface);
@@ -864,7 +839,6 @@ body.dark .p-stat-box b{color:var(--primary-light);}
 }
 body.dark .sub-group-title{color:var(--primary-light);}
 
-/* SWITCH TOGGLE */
 .toggle-row{
   display:flex;
   align-items:center;
@@ -880,7 +854,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
   accent-color:var(--primary);
 }
 
-/* SNAPSHOT LIST */
 .snap-item{
   display:flex;
   justify-content:space-between;
@@ -895,7 +868,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
   font-size:12.5px;
 }
 
-/* MODAL (SALARY SLIP + EXCEL) */
 .modal-backdrop{
   position:fixed;
   inset:0;
@@ -921,7 +893,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
 }
 .modal-box.sm-modal{max-width:460px;}
 
-/* SALARY SLIP PAPER ALWAYS CLEAN WHITE FOR PRINTING/PDF */
 .slip-paper{
   border:1.5px solid #ea580c;
   border-radius:8px;
@@ -998,7 +969,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
   .slip-meta{grid-template-columns:1fr;}
 }
 
-/* PRINT STYLES FOR SALARY SLIP PDF */
 @media print{
   body *{visibility:hidden;}
   #slipModal, #slipModal *{visibility:visible;}
@@ -1016,9 +986,7 @@ body.dark .sub-group-title{color:var(--primary-light);}
 }
 </style>
 </head>
-
-
-  <body>
+<body>
 
 <header>
   <div class="header-inner">
@@ -1036,7 +1004,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
   </div>
 </header>
 
-<!-- SLIDE-OUT MENU BAR -->
 <div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
 <aside id="sideMenu" class="side-menu" aria-label="Main Menu">
   <div class="side-menu-header">
@@ -1101,15 +1068,12 @@ body.dark .sub-group-title{color:var(--primary-light);}
 </aside>
 
 <main class="wrap">
-  <!-- IN-APP REMINDER BANNER -->
   <div id="reminderBanner" class="reminder-banner hidden">
     <span id="reminderBannerText"></span>
     <button class="sm secondary" onclick="dismissBanner()">ঠিক আছে</button>
   </div>
 
-  <!-- ================= HOME SCREEN (CLEAN): TODAY'S QUICK BOX + DAILY ATTENDANCE TABLE ================= -->
   <div id="tab-attendance" class="tab-pane">
-    <!-- PINNED TODAY'S HIGHLIGHTED ENTRY BOX -->
     <section class="today-card">
       <div class="today-card-top">
         <div class="today-title-wrap">
@@ -1147,7 +1111,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
       </div>
     </section>
 
-    <!-- FULL MONTH ATTENDANCE TABLE -->
     <section class="card">
       <h2>
         <span>দৈনিক Attendance Entry</span>
@@ -1179,7 +1142,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
     </section>
   </div>
 
-  <!-- ================= MENU VIEW: BEAUTIFUL LIVE SALARY DASHBOARD ================= -->
   <div id="tab-dashboard" class="tab-pane hidden">
     <section class="card" style="padding:14px">
       <h2>
@@ -1227,7 +1189,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
         </div>
       </div>
 
-      <!-- EARNINGS VS DEDUCTIONS VISUAL BAR -->
       <div class="split-bar-card">
         <div class="split-bar-head">
           <span class="good" id="dashGrossLabel">মোট আয়: ₹0.00</span>
@@ -1239,7 +1200,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
         </div>
       </div>
 
-      <!-- KPI ICON CARDS -->
       <div class="dash-kpi-grid" id="dashQuickStats"></div>
 
       <div class="actions">
@@ -1251,7 +1211,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
     </section>
   </div>
 
-  <!-- ================= MENU VIEW: SALARY SUMMARY ================= -->
   <div id="tab-summary" class="tab-pane hidden">
     <section class="card">
       <h2>
@@ -1272,7 +1231,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
     </section>
   </div>
 
-  <!-- ================= MENU VIEW: MONTHLY SETTINGS ================= -->
   <div id="tab-settings" class="tab-pane hidden">
     <section class="card">
       <h2>
@@ -1320,7 +1278,7 @@ body.dark .sub-group-title{color:var(--primary-light);}
         <div>
           <label>Mediclaim (₹)</label>
           <input id="mediclaim" type="number" value="250" step="0.01">
-        </div>
+                  </div>
         <div>
           <label>Professional Tax (₹)</label>
           <input id="ptax" type="number" value="120" step="0.01">
@@ -1333,7 +1291,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
     </section>
   </div>
 
-  <!-- ================= MENU VIEW: HOLIDAY LIST ================= -->
   <div id="tab-holidays" class="tab-pane hidden">
     <section class="card">
       <h2>
@@ -1357,7 +1314,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
     </section>
   </div>
 
-  <!-- ================= MENU VIEW: SALARY HISTORY ================= -->
   <div id="tab-history" class="tab-pane hidden">
     <section class="card">
       <h2>
@@ -1420,7 +1376,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
     </section>
   </div>
 
-  <!-- ================= MENU VIEW: ATTRACTIVE MY PROFILE ================= -->
   <div id="tab-profile" class="tab-pane hidden">
     <section class="card">
       <h2>
@@ -1428,7 +1383,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
         <button class="sm secondary" onclick="switchTab('attendance')">← Attendance</button>
       </h2>
 
-      <!-- EMPLOYEE ID BANNER CARD -->
       <div class="id-banner-card">
         <div class="id-banner-top">
           <div class="profile-photo-box" id="profilePhotoPreview">BM</div>
@@ -1445,14 +1399,12 @@ body.dark .sub-group-title{color:var(--primary-light);}
         </div>
       </div>
 
-      <!-- LIVE QUICK SALARY CHIPS -->
       <div class="profile-stat-strip">
         <div class="p-stat-box"><span>Basic Salary</span><b id="profBasicStat">₹0</b></div>
         <div class="p-stat-box"><span>Duty Hours</span><b id="profDutyStat">9 ঘ</b></div>
         <div class="p-stat-box"><span>Total Salary</span><b id="profTotalStat" class="good">₹0.00</b></div>
       </div>
 
-      <!-- GROUP 1: PERSONAL & JOB INFO -->
       <div class="sub-group-card">
         <div class="sub-group-title">🪪 ব্যক্তিগত ও চাকরির তথ্য</div>
         <div class="grid">
@@ -1483,7 +1435,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
         </div>
       </div>
 
-      <!-- GROUP 2: CONTACT & ADDRESS -->
       <div class="sub-group-card">
         <div class="sub-group-title">📍 যোগাযোগ ও ঠিকানা</div>
         <div class="grid">
@@ -1502,7 +1453,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
         </div>
       </div>
 
-      <!-- GROUP 3: BANK & PF DETAILS -->
       <div class="sub-group-card">
         <div class="sub-group-title">🏦 ব্যাংক ও PF/UAN তথ্য</div>
         <div class="grid">
@@ -1529,7 +1479,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
     </section>
   </div>
 
-  <!-- ================= MENU VIEW: BACKUP & REMINDERS ================= -->
   <div id="tab-backup" class="tab-pane hidden">
     <section class="card">
       <h2>
@@ -1563,7 +1512,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
       </div>
     </section>
 
-    <!-- AUTOMATIC BACKUP -->
     <section class="card">
       <h2>
         <span>Automatic Backup (অ্যাপ মেমোরি)</span>
@@ -1593,7 +1541,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
       <div id="autoBackupList" class="muted">এখনও কোনো অটো ব্যাকআপ নেই।</div>
     </section>
 
-    <!-- NOTIFICATION & REMINDER -->
     <section class="card">
       <h2>
         <span>Notification ও Reminder</span>
@@ -1602,7 +1549,7 @@ body.dark .sub-group-title{color:var(--primary-light);}
       <div class="actions" style="margin-top:0;margin-bottom:8px">
         <button onclick="requestNotifPermission()">Notification চালু করুন</button>
         <button class="secondary" onclick="sendTestNotification()">Test Notification</button>
-      </div>
+              </div>
       <div class="toggle-row">
         <div>
           <b>দৈনিক Attendance Reminder</b>
@@ -1634,7 +1581,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
   </div>
 </main>
 
-<!-- ================= SALARY SLIP PDF MODAL ================= -->
 <div id="slipModal" class="modal-backdrop hidden">
   <div class="modal-box">
     <div class="actions no-print" style="justify-content:space-between;margin-top:0;margin-bottom:10px">
@@ -1648,7 +1594,6 @@ body.dark .sub-group-title{color:var(--primary-light);}
   </div>
 </div>
 
-<!-- ================= EXCEL EXPORT MODAL ================= -->
 <div id="excelModal" class="modal-backdrop hidden">
   <div class="modal-box sm-modal">
     <h2>
@@ -1672,9 +1617,7 @@ body.dark .sub-group-title{color:var(--primary-light);}
   </div>
 </div>
 
-
-    <script>
-/* ===== BASIC VARIABLES ===== */
+<script>
 const $ = id => document.getElementById(id);
 const months = [
   'January','February','March','April',
@@ -1729,13 +1672,12 @@ let currentTab = 'attendance';
 let firedReminders = {};
 let lastGeneratedCSV = { filename: '', content: '' };
 
-/* ===== DARK / LIGHT THEME ===== */
 function applyTheme(mode){
   const isDark = mode === 'dark';
   document.body.classList.toggle('dark', isDark);
-  $('themeToggleBtn').textContent = isDark ? '☀️' : '🌙';
-  $('menuThemeIcon').textContent = isDark ? '☀️' : '🌙';
-  $('menuThemeLabel').textContent = isDark ? 'Light Theme চালু করুন' : 'Dark Theme চালু করুন';
+  if($('themeToggleBtn')) $('themeToggleBtn').textContent = isDark ? '☀️' : '🌙';
+  if($('menuThemeIcon')) $('menuThemeIcon').textContent = isDark ? '☀️' : '🌙';
+  if($('menuThemeLabel')) $('menuThemeLabel').textContent = isDark ? 'Light Theme চালু করুন' : 'Dark Theme চালু করুন';
   const meta = $('metaThemeColor');
   if(meta) meta.setAttribute('content', isDark ? '#1c1917' : '#ea580c');
   localStorage.setItem('bivas-theme', isDark ? 'dark' : 'light');
@@ -1745,12 +1687,13 @@ function toggleTheme(){
   applyTheme(isDark ? 'light' : 'dark');
 }
 
-/* ===== SLIDE-OUT MENU BAR & NAVIGATION ===== */
 function openMenu(){
-  $('sideMenu').classList.add('open');$('menuOverlay').classList.add('open');
+  $('sideMenu').classList.add('open');
+  $('menuOverlay').classList.add('open');
 }
 function closeMenu(){
-  $('sideMenu').classList.remove('open');$('menuOverlay').classList.remove('open');
+  $('sideMenu').classList.remove('open');
+  $('menuOverlay').classList.remove('open');
 }
 function switchTab(tabName){
   currentTab = tabName;
@@ -1766,7 +1709,7 @@ function switchTab(tabName){
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if(tabName === 'history') renderAllHistory();
-  if(tabName === 'backup') {
+  if(tabName === 'backup'){
     renderAutoBackupList();
     updateNotifBadge();
   }
@@ -1778,7 +1721,6 @@ function updateHeaderSubtitle(){
   $('headerSub').textContent = `${pageTitle} • ${displayName}`;
 }
 
-/* ===== MONTH & DATE KEYS ===== */
 function monthKey(){
   return `${$('year').value}-${String(+$('month').value+1).padStart(2,'0')}`;
 }
@@ -1801,10 +1743,9 @@ function fmtDateTime(ts){
   });
 }
 
-/* ===== SETTINGS ===== */
 function settingsObject(){
   let s = {};
-  SET_KEYS.forEach(k => s[k] = $(k).value);
+  SET_KEYS.forEach(k => { if($(k)) s[k] = $(k).value; });
   return s;
 }
 function saveSettings(){
@@ -1816,19 +1757,17 @@ function applyMonthSettings(k){
   let s = monthSettings[k];
   if(!s) return;
   SET_KEYS.forEach(x => {
-    if(s[x] !== undefined){
+    if(s[x] !== undefined && $(x)){
       $(x).value = s[x];
     }
   });
 }
 
-/* ===== TIME FORMAT ===== */
 function fmtTime(hours){
   let mins = Math.round(Math.max(0, hours) * 60);
   return `${Math.floor(mins/60)} ঘ ${mins%60} মি`;
 }
 
-/* ===== PASSWORD ===== */
 function hashPassword(p){
   let h = 2166136261;
   for(let i=0; i<p.length; i++){
@@ -1875,7 +1814,6 @@ function changePassword(){
   alert('Password পরিবর্তন হয়েছে।');
 }
 
-/* ===== HOLIDAYS & DATA LOAD ===== */
 function holidayName(date){
   let h = holidays.find(x => x.date === date);
   return h ? h.name : '';
@@ -1906,7 +1844,6 @@ function loadData(){
   }
 }
 
-/* ===== READ & SAVE ATTENDANCE ===== */
 function readRecords(targetKey){
   let o = {};
   document.querySelectorAll('#attendance tr').forEach(tr => {
@@ -1931,7 +1868,6 @@ function saveCurrentMonth(){
   saveSettings();
 }
 
-/* ===== TODAY'S PINNED QUICK-ENTRY CARD (TWO-WAY SYNC) ===== */
 function renderTodayQuickCard(){
   const now = new Date();
   const dt = todayStr();
@@ -1944,10 +1880,11 @@ function renderTodayQuickCard(){
   let r = records[mKey][dt] || {};
   let typ = holidayName(dt) ? 'Holiday' : (r.type || defaultType(dt, dayIdx));
 
-  $('todayType').value = typ;
-  $('todayIn').value = r.in \vert{}\vert{} '';$('todayOut').value = r.out || '';
-  $('todayIn').dataset.last =$('todayIn').value;
-  $('todayOut').dataset.last =$('todayOut').value;
+    $('todayType').value = typ;
+  $('todayIn').value = r.in || '';
+  $('todayOut').value = r.out || '';
+  $('todayIn').dataset.last = $('todayIn').value;
+  $('todayOut').dataset.last = $('todayOut').value;
 
   updateTodayCardMetrics(typ, $('todayIn').value, $('todayOut').value);
 }
@@ -1963,7 +1900,8 @@ function updateTodayCardMetrics(type, inVal, outVal){
     ot = hrs;
   }
   $('todayWorked').textContent = fmtTime(hrs);
-  $('todayRegular').textContent = fmtTime(regular);$('todayOT').textContent = fmtTime(ot);
+  $('todayRegular').textContent = fmtTime(regular);
+  $('todayOT').textContent = fmtTime(ot);
 }
 
 function syncTodayCardToTable(){
@@ -2004,7 +1942,6 @@ function syncTodayCardToTable(){
   setTimeout(() => { $('todaySyncBadge').textContent = 'অটো-সিঙ্ক চালু'; }, 1800);
 }
 
-/* ===== RENDER MONTH CALENDAR ===== */
 function renderMonth(){
   let yr = Number($('year').value);
   let mo = Number($('month').value);
@@ -2086,7 +2023,6 @@ function renderMonth(){
     tb.appendChild(tr);
   }
 
-  /* PASSWORD PROTECTION ON TABLE TIME INPUTS */
   document.querySelectorAll('#attendance input[type="time"]').forEach(el => {
     el.dataset.last = el.value;
     el.addEventListener('change', () => {
@@ -2113,7 +2049,6 @@ function renderMonth(){
     });
   });
 
-  /* TYPE CHANGE IN TABLE */
   document.querySelectorAll('#attendance .typ').forEach(el => {
     el.addEventListener('change', () => {
       let dt = el.dataset.date;
@@ -2141,7 +2076,6 @@ function renderMonth(){
   calculate();
 }
 
-/* ===== TIME & EXACT SALARY CALCULATION (UNCHANGED FORMULAS) ===== */
 function getWorkedHours(inTime, outTime){
   if(!inTime || !outTime) return 0;
   let a = inTime.split(':').map(Number);
@@ -2181,13 +2115,11 @@ function computeMonthMetrics(key, updateDOM){
 
     if(hrs > 0) presentDays++;
 
-    /* NORMAL DAY */
     if(type === 'Normal'){
       requiredDays++;
       regular = Math.min(hrs, dailyDuty);
       extra = Math.max(0, hrs - dailyDuty);
     }
-    /* SUNDAY AND HOLIDAY */
     else if(type === 'Sunday' || type === 'Holiday'){
       extra = hrs;
     }
@@ -2206,32 +2138,21 @@ function computeMonthMetrics(key, updateDOM){
     }
   }
 
-  /* REQUIRED DUTY HOURS */
   let required = requiredDays * dailyDuty;
-  /* BASIC AND HOURLY RATE */
   let daily = salaryVal / 25;
   let hourly = dailyDuty > 0 ? daily / dailyDuty : 0;
-  /* CL ADJUSTMENT */
   let clAdjusted = Math.min(Math.max(0, required - total), clHoursVal);
-  /* SHORTFALL */
   let shortfall = Math.max(0, required - total - clAdjusted);
-  /* SALARY SUMMARY OT */
   let summaryOT = Math.max(0, total + clAdjusted - required);
-  /* AVAILABLE CL AFTER ADJUSTMENT */
   let availableCL = Math.max(0, clHoursVal - clAdjusted);
-  /* FIRST PAYMENT */
   let deduction = shortfall * hourly;
   let first = salaryVal - epfVal - mediclaimVal - ptaxVal - deduction;
-  /* SECOND PAYMENT */
   let second = 0;
   if(total >= totalRegular){
-    /* NEW FORMULA */
     second = Math.max(0, (summaryOT + availableCL) * hourly);
   }else{
-    /* OLD FORMULA */
     second = Math.max(0, (total + clAdjusted - required) * hourly);
   }
-  /* TOTAL PAYMENT */
   let totalSalary = first + second;
 
   return {
@@ -2242,7 +2163,6 @@ function computeMonthMetrics(key, updateDOM){
     availableCL, deduction, first, second, totalSalary
   };
 }
-
 
 function calculate(){
   const m = computeMonthMetrics(displayedMonthKey, true);
@@ -2271,12 +2191,10 @@ function calculate(){
     </div>
   `).join('');
 
-  /* UPDATE PROFILE STAT CHIPS */
-  $('profBasicStat').textContent = `₹${m.salary.toFixed(0)}`;
-  $('profDutyStat').textContent = `${m.dailyDuty} ঘ`;
-  $('profTotalStat').textContent = `₹${m.totalSalary.toFixed(2)}`;
+  if($('profBasicStat')) $('profBasicStat').textContent = `₹${m.salary.toFixed(0)}`;
+  if($('profDutyStat')) $('profDutyStat').textContent = `${m.dailyDuty} ঘ`;
+  if($('profTotalStat')) $('profTotalStat').textContent = `₹${m.totalSalary.toFixed(2)}`;
 
-  /* UPDATE BEAUTIFUL LIVE DASHBOARD */
   $('dashTotalSalary').textContent = `₹${m.totalSalary.toFixed(2)}`;
   $('dashFirstPay').textContent = `₹${m.first.toFixed(2)}`;
   $('dashSecondPay').textContent = `₹${m.second.toFixed(2)}`;
@@ -2284,7 +2202,8 @@ function calculate(){
 
   let pct = m.required > 0 ? Math.min(100, Math.round((m.total / m.required) * 100)) : 0;
   $('dashProgressText').textContent = `${fmtTime(m.total)} / ${fmtTime(m.required)} (${pct}%)`;
-  $('dashProgressFill').style.width = `${pct}%`;
+
+    $('dashProgressFill').style.width = `${pct}%`;
 
   const gross = m.salary + m.second;
   const totalDed = m.epf + m.mediclaim + m.ptax + m.deduction;
@@ -2333,7 +2252,6 @@ function calculate(){
   `;
 }
 
-/* ===== SAVE DATA ===== */
 function saveData(){
   saveCurrentMonth();
   calculate();
@@ -2344,7 +2262,6 @@ function saveData(){
   alert('এই মাসের ডেটা Save হয়েছে।');
 }
 
-/* ===== MY PROFILE ===== */
 function renderProfileUI(){
   PROFILE_KEYS.forEach(k => {
     if($('prof_' + k)) $('prof_' + k).value = profile[k] || '';
@@ -2356,12 +2273,13 @@ function renderProfileUI(){
   $('sideName').textContent = displayName;
   $('sideRole').textContent = profile.designation || profile.company || 'Salary Manager';
 
-  /* ID BANNER CARD */
-  $('idCardName').textContent = displayName;
-  const empPart = profile.empId ? `ID: ${profile.empId}` : 'ID: —';
-  const desigPart = profile.designation ? `পদবী: ${profile.designation}` : 'পদবী: —';
-  $('idCardMeta').textContent = `${empPart} • ${desigPart}`;
-  $('idCardCompany').textContent = profile.company || 'BIVAS SALARY MANAGER';
+  if($('idCardName')) $('idCardName').textContent = displayName;
+  if($('idCardMeta')){
+    const empPart = profile.empId ? `ID: ${profile.empId}` : 'ID: —';
+    const desigPart = profile.designation ? `পদবী: ${profile.designation}` : 'পদবী: —';
+    $('idCardMeta').textContent = `${empPart} • ${desigPart}`;
+  }
+  if($('idCardCompany')) $('idCardCompany').textContent = profile.company || 'BIVAS SALARY MANAGER';
 
   if(profile.photo){
     const imgTag = `<img src="${profile.photo}" alt="Profile">`;
@@ -2413,7 +2331,6 @@ function removeProfilePhoto(){
   renderProfileUI();
 }
 
-/* ===== SALARY SLIP PDF ===== */
 function openSalarySlip(key){
   saveCurrentMonth();
   currentSlipMonthKey = key || displayedMonthKey;
@@ -2543,11 +2460,10 @@ function printSalarySlip(){
   window.print();
 }
 function downloadSlipHTML(){
-  const html = `<!doctype html><html lang="bn"><head><meta charset="utf-8"><title>Salary Slip ${currentSlipMonthKey}</title><style>body{font-family:Arial,sans-serif;padding:20px;max-width:760px;margin:auto;}.slip-paper{border:1.5px solid #ea580c;border-radius:8px;padding:18px;}.slip-header{text-align:center;border-bottom:2px solid #ea580c;padding-bottom:10px;margin-bottom:12px;}.slip-header h1{margin:0;color:#c2410c;font-size:20px;}.slip-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px;margin-bottom:12px;background:#fff7ed;padding:10px;border:1px solid #fed7aa;}.slip-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;}.slip-table th,.slip-table td{border:1px solid #fed7aa;padding:7px 9px;}.slip-table th{background:#ffedd5;color:#9a3412;}.slip-net-box{background:#dcfce7;border:1.5px solid #15803d;padding:12px;display:flex;justify-content:space-between;font-weight:700;color:#14532d;font-size:16px;margin-top:10px;}.slip-sign{display:flex;justify-content:space-between;margin-top:32px;font-size:12px;}.slip-sign div{border-top:1px solid #64748b;padding-top:4px;min-width:140px;text-align:center;}</style></head><body><div class="slip-paper">${$('slipContent').innerHTML}</div></body></html>`;
-  triggerFileDownload(html, `SALARY_SLIP_${currentSlipMonthKey}.html`, 'text/html;charset=utf-8');
+  const html = '<!doctype html><html lang="bn"><head><meta charset="utf-8"><title>Salary Slip ' + currentSlipMonthKey + '</title><style>body{font-family:Arial,sans-serif;padding:20px;max-width:760px;margin:auto;}.slip-paper{border:1.5px solid #ea580c;border-radius:8px;padding:18px;}.slip-header{text-align:center;border-bottom:2px solid #ea580c;padding-bottom:10px;margin-bottom:12px;}.slip-header h1{margin:0;color:#c2410c;font-size:20px;}.slip-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px;margin-bottom:12px;background:#fff7ed;padding:10px;border:1px solid #fed7aa;}.slip-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;}.slip-table th,.slip-table td{border:1px solid #fed7aa;padding:7px 9px;}.slip-table th{background:#ffedd5;color:#9a3412;}.slip-net-box{background:#dcfce7;border:1.5px solid #15803d;padding:12px;display:flex;justify-content:space-between;font-weight:700;color:#14532d;font-size:16px;margin-top:10px;}.slip-sign{display:flex;justify-content:space-between;margin-top:32px;font-size:12px;}.slip-sign div{border-top:1px solid #64748b;padding-top:4px;min-width:140px;text-align:center;}</style></head><body><div class="slip-paper">' + $('slipContent').innerHTML + '</div></body></html>';
+    triggerFileDownload(html, `SALARY_SLIP_${currentSlipMonthKey}.html`, 'text/html;charset=utf-8');
 }
 
-/* ===== HOLIDAY LIST ===== */
 function renderHolidayList(){
   let box = $('holidayList');
   box.innerHTML = '';
@@ -2591,7 +2507,6 @@ function addHoliday(){
   renderMonth();
 }
 
-/* ===== RELIABLE DOWNLOAD HELPER ===== */
 function triggerFileDownload(content, filename, mimeType){
   const blob = new Blob([content], { type: mimeType });
   const blobUrl = URL.createObjectURL(blob);
@@ -2605,7 +2520,6 @@ function triggerFileDownload(content, filename, mimeType){
   return 'data:' + mimeType + ',' + encodeURIComponent(content);
 }
 
-/* ===== FIXED EXCEL DOWNLOAD & OPEN ===== */
 function exportExcel(){
   try{
     saveCurrentMonth();
@@ -2714,11 +2628,8 @@ async function copyExcelCSV(){
   }catch(e){
     alert('Copy করা যায়নি: ' + e.message);
   }
-      }
+}
 
-
-
-/* ===== FIXED BACKUP & RESTORE + AUTOMATIC BACKUP ===== */
 function buildBackupPayload(){
   saveCurrentMonth();
   return {
@@ -2861,10 +2772,9 @@ function restoreFromText(){
   }
 }
 
-/* AUTOMATIC BACKUP SNAPSHOTS */
 function saveAutoBackupSettings(){
   autoBackupCfg.enabled = $('autoBackupEnabled').checked;
-  autoBackupCfg.freq = $('autoBackupFreq').value;
+    autoBackupCfg.freq = $('autoBackupFreq').value;
   localStorage.setItem('bivas-auto-backup-cfg', JSON.stringify(autoBackupCfg));
 }
 function checkScheduledAutoBackup(){
@@ -2932,7 +2842,6 @@ function updateLastBackupBadge(){
   $('lastBackupBadge').textContent = latest ? `শেষ ব্যাকআপ: ${fmtDateTime(latest)}` : 'এখনও Backup হয়নি';
 }
 
-/* ===== SALARY HISTORY ===== */
 function showHistory(){
   let y = Number($('historyYear').value);
   let m = Number($('historyMonth').value);
@@ -3010,7 +2919,6 @@ function renderAllHistory(){
   `;
 }
 
-/* ===== NOTIFICATION & REMINDER ===== */
 function renderReminderUI(){
   $('remEnabled').checked = !!reminderCfg.enabled;
   $('remInTime').value = reminderCfg.inTime || '09:00';
@@ -3100,7 +3008,6 @@ function checkReminders(){
   }
 }
 
-/* ===== EVENT LISTENERS ===== */
 $('year').addEventListener('change', function(){
   saveCurrentMonth();
   renderMonth();
@@ -3120,7 +3027,6 @@ SET_KEYS.forEach(k => {
   });
 });
 
-/* TODAY QUICK CARD LISTENERS (WITH PASSWORD PROTECTION ON TIME) */
 $('todayType').addEventListener('change', () => {
   syncTodayCardToTable();
 });
@@ -3145,7 +3051,6 @@ $('todayType').addEventListener('change', () => {
   });
 });
 
-/* ===== APPLICATION START ===== */
 function init(){
   loadData();
   applyTheme(localStorage.getItem('bivas-theme') || 'light');
@@ -3185,12 +3090,3 @@ init();
 </script>
 </body>
 </html>
-
-
-
-      
-  
-  
-  
-  
-  
