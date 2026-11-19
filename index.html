@@ -1,876 +1,2437 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#123c69">
 <title>BIVAS SALARY MANAGER</title>
-
 <style>
-:root {
- --blue:#123c69;
- --bg:#f2f5f9;
- --green:#147d54;
- --red:#b42318;
+:root{
+  --blue:#123c69;
+  --blue-light:#1d528a;
+  --bg:#f2f5f9;
+  --card:#ffffff;
+  --green:#147d54;
+  --green-bg:#e8f5e9;
+  --red:#b42318;
+  --red-bg:#fee4e2;
+  --amber:#b54708;
+  --amber-bg:#fff7e6;
+  --border:#dbe3ee;
+  --muted:#667085;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;}
 body{
- margin:0;
- font-family:Arial,'Noto Sans Bengali',sans-serif;
- background:var(--bg);
- color:#17212b;
+  margin:0;
+  font-family:Arial,'Noto Sans Bengali',sans-serif;
+  background:var(--bg);
+  color:#17212b;
+  padding-bottom:32px;
 }
 header{
- background:var(--blue);
- color:white;
- padding:18px;
- font-size:21px;
- font-weight:bold;
+  background:linear-gradient(135deg,#123c69,#1d528a);
+  color:#fff;
+  padding:12px 14px;
+  position:sticky;
+  top:0;
+  z-index:50;
+  box-shadow:0 2px 10px rgba(18,60,105,0.22);
+}
+.header-inner{
+  max-width:980px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.menu-btn{
+  background:rgba(255,255,255,0.16);
+  color:#fff;
+  border:0;
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:21px;
+  cursor:pointer;
+  margin:0;
+  padding:0;
+  flex-shrink:0;
+}
+.menu-btn:active{background:rgba(255,255,255,0.28);}
+.header-title{
+  font-weight:700;
+  font-size:17px;
+  letter-spacing:0.3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  cursor:pointer;
+}
+.header-sub{
+  font-size:11.5px;
+  opacity:0.88;
+  margin-top:2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.header-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:15px;
+  overflow:hidden;
+  flex-shrink:0;
+  border:2px solid rgba(255,255,255,0.45);
+  cursor:pointer;
+}
+.header-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.menu-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.5);
+  z-index:80;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.22s ease;
+}
+.menu-overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+.side-menu{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:275px;
+  max-width:82vw;
+  background:#ffffff;
+  z-index:90;
+  transform:translateX(-100%);
+  transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  display:flex;
+  flex-direction:column;
+  box-shadow:4px 0 24px rgba(0,0,0,0.22);
+}
+.side-menu.open{
+  transform:translateX(0);
+}
+
+.side-menu-header{
+  background:linear-gradient(135deg,#123c69,#1d528a);
+  color:#fff;
+  padding:18px 16px;
+  position:relative;
+}
+.side-close{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:rgba(255,255,255,0.18);
+  color:#fff;
+  border:0;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  font-size:16px;
+  cursor:pointer;
+  margin:0;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.side-user{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:4px;
+}
+.side-avatar{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.22);
+  border:2px solid rgba(255,255,255,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:18px;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.side-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.side-name{
+  font-weight:700;
+  font-size:15px;
+}
+.side-role{
+  font-size:12px;
+  opacity:0.86;
+  margin-top:2px;
+}
+.side-nav{
+  padding:10px;
+  flex:1;
+  overflow-y:auto;
+}
+.menu-item{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  margin:0 0 5px 0;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#1e293b;
+  font-size:14px;
+  font-weight:600;
+  text-align:left;
+  cursor:pointer;
+  transition:background 0.15s ease;
+}
+.menu-item:hover{background:#f1f5f9;}
+.menu-item.active{background:#e6f0fa;color:var(--blue);}
+.menu-icon{
+  font-size:18px;
+  width:24px;
+  text-align:center;
+  flex-shrink:0;
+}
+.menu-divider{
+  height:1px;
+  background:#e2e8f0;
+  margin:10px 6px;
+}
+.side-footer{
+  padding:12px 16px;
+  border-top:1px solid #e2e8f0;
+  font-size:11.5px;
+  color:var(--muted);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 .wrap{
- max-width:1000px;
- margin:auto;
- padding:12px;
+  padding:12px;
+  max-width:980px;
+  margin:auto;
 }
 .card{
- background:white;
- padding:15px;
- border-radius:12px;
- margin:12px 0;
- box-shadow:0 2px 8px #13243a12;
+  background:var(--card);
+  padding:15px;
+  border-radius:12px;
+  margin:10px 0;
+  box-shadow:0 2px 8px rgba(19,36,58,0.07);
 }
 h2{
- color:var(--blue);
- font-size:17px;
- margin:0 0 13px;
+  font-size:17px;
+  margin:0 0 12px;
+  color:var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
 }
-h3{font-size:15px}
+h3{
+  font-size:14px;
+  margin:14px 0 8px;
+  color:#1e3a5f;
+}
+.badge{
+  display:inline-block;
+  font-size:11px;
+  font-weight:600;
+  padding:3px 9px;
+  border-radius:12px;
+  background:#e6f0fa;
+  color:var(--blue);
+}
+.badge.green{background:var(--green-bg);color:var(--green);}
+.badge.red{background:var(--red-bg);color:var(--red);}
+.badge.amber{background:var(--amber-bg);color:var(--amber);}
 .grid{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:10px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
 }
 label{
- display:block;
- font-size:13px;
- margin-bottom:5px;
- color:#455468;
+  font-size:12.5px;
+  color:#455468;
+  display:block;
+  margin-bottom:5px;
+  font-weight:600;
 }
-input,select,textarea,button{
- font:inherit;
-}
+input,select,button,textarea{font:inherit;}
 input,select,textarea{
- width:100%;
- padding:10px;
- border:1px solid #cbd5e1;
- border-radius:8px;
- background:white;
+  width:100%;
+  padding:9px 10px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  background:#fff;
+  font-size:14px;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--blue);
 }
 button{
- border:0;
- border-radius:8px;
- padding:11px 13px;
- background:var(--blue);
- color:white;
- font-weight:600;
- margin:4px 3px 4px 0;
- cursor:pointer;
+  border:0;
+  border-radius:8px;
+  padding:10px 13px;
+  background:var(--blue);
+  color:#fff;
+  font-weight:600;
+  font-size:13px;
+  margin:4px 4px 4px 0;
+  cursor:pointer;
 }
-.secondary{
- background:#e4ebf3;
- color:#18324e;
+button:active{opacity:0.88;}
+button.secondary{background:#e4ebf3;color:#18324e;}
+button.success{background:var(--green);color:#fff;}
+button.danger{background:var(--red);color:#fff;}
+button.sm{padding:6px 10px;font-size:12px;margin:2px;}
+.dash-hero{
+  background:linear-gradient(135deg,#123c69,#1f5c99);
+  color:#fff;
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:12px;
 }
-.danger{background:var(--red)}
-.green{background:var(--green)}
+.dash-hero-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.dash-net-label{font-size:12px;opacity:0.85;}
+.dash-net-val{font-size:28px;font-weight:700;margin-top:3px;}
+.dash-sub-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:12px;
+}
+.dash-mini{
+  background:rgba(255,255,255,0.14);
+  border-radius:8px;
+  padding:8px 10px;
+}
+.dash-mini span{display:block;font-size:11px;opacity:0.88;}
+.dash-mini b{display:block;font-size:14px;margin-top:3px;}
+.progress-wrap{margin-top:12px;}
+.progress-label{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  margin-bottom:5px;
+}
+.progress-bar{
+  height:10px;
+  background:rgba(255,255,255,0.22);
+  border-radius:10px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:#4ade80;
+  border-radius:10px;
+  transition:width 0.3s ease;
+}
 .stat{
- background:#f4f7fb;
- padding:11px;
- border-radius:9px;
+  background:#f4f7fb;
+  border-radius:8px;
+  padding:10px;
+  border:1px solid #e7edf5;
 }
-.stat b{
- display:block;
- font-size:17px;
- margin-top:6px;
+.stat label{margin-bottom:3px;font-weight:500;}
+.stat b{display:block;font-size:16px;margin-top:4px;}
+
+
+ .row{
+  display:flex;
+  gap:8px;
+  align-items:end;
+  flex-wrap:wrap;
 }
-.row{
- display:flex;
- gap:9px;
- flex-wrap:wrap;
- align-items:end;
-}
-.row>*{flex:1;min-width:110px}
-.tablewrap{overflow-x:auto}
+.row>*{flex:1;min-width:110px;}
+.tablewrap{overflow-x:auto;}
 table{
- width:100%;
- border-collapse:collapse;
- font-size:12px;
- min-width:780px;
+  border-collapse:collapse;
+  width:100%;
+  font-size:12px;
+  min-width:760px;
 }
 th,td{
- border-bottom:1px solid #e3e8ef;
- padding:8px;
- text-align:left;
+  border-bottom:1px solid #e3e8ef;
+  padding:8px;
+  text-align:left;
 }
-th{background:#edf2f8}
-td input,td select{min-width:100px;padding:7px}
-.muted{font-size:12px;color:#667085;line-height:1.5}
-.hidden{display:none!important}
-.good{color:var(--green)}
-.bad{color:var(--red)}
-.notice{
- padding:10px;
- background:#fff7e6;
- color:#754c00;
- border-radius:8px;
- font-size:13px;
+th{background:#edf2f8;color:#1d3557;}
+td input,td select{
+  min-width:96px;
+  padding:7px;
+  font-size:13px;
 }
+.muted{font-size:12px;color:var(--muted);line-height:1.5;}
+.good{color:var(--green);}
+.bad{color:var(--red);}
+.actions{display:flex;flex-wrap:wrap;margin-top:8px;}
+.hidden{display:none !important;}
 .holiday{
- padding:7px;
- border-bottom:1px solid #eee;
- font-size:13px;
+  font-size:13px;
+  padding:7px 0;
+  border-bottom:1px solid #eee;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
 }
-.sunday td{background:#e8f5e9}
-.holiday-row td{background:#fff0dc}
-.nav{
- display:flex;
- flex-wrap:wrap;
- gap:4px;
+.notice{
+  padding:10px 12px;
+  border-radius:8px;
+  background:var(--amber-bg);
+  color:#754c00;
+  font-size:12.5px;
+  line-height:1.5;
+  margin-top:8px;
+  border:1px solid #f7d9a6;
 }
-.nav button{font-size:12px}
-@media(max-width:420px){
- .grid{grid-template-columns:1fr 1fr}
- .stat b{font-size:14px}
+.notice.ok{
+  background:var(--green-bg);
+  color:#0f5132;
+  border-color:#b7e4c7;
+}
+.reminder-banner{
+  background:#fff4d6;
+  border-left:4px solid #d97706;
+  padding:10px 12px;
+  border-radius:8px;
+  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+  color:#78350f;
+}
+tr.Sunday td{background:#e8f5e9;}
+tr.holiday-row td{background:#fff0dc;}
+tr.today-row td{outline:2px solid #1d528a;outline-offset:-2px;}
+.profile-top{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+.profile-photo-box{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  background:#e4ebf3;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  font-weight:700;
+  color:var(--blue);
+  overflow:hidden;
+  border:2px solid var(--blue);
+  flex-shrink:0;
+}
+.profile-photo-box img{width:100%;height:100%;object-fit:cover;}
+.toggle-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid #edf2f8;
+  gap:10px;
+}
+.toggle-row input[type="checkbox"]{width:20px;height:20px;cursor:pointer;}
+.snap-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:9px 10px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:8px;
+  margin-bottom:6px;
+  font-size:12.5px;
+}
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.62);
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+  overflow-y:auto;
+}
+.modal-box{
+  background:#fff;
+  width:100%;
+  max-width:780px;
+  border-radius:12px;
+  padding:16px;
+  max-height:92vh;
+  overflow-y:auto;
+  box-shadow:0 12px 35px rgba(0,0,0,0.28);
+}
+.slip-paper{
+  border:1.5px solid #123c69;
+  border-radius:8px;
+  padding:18px;
+  background:#fff;
+  color:#111827;
+}
+.slip-header{
+  text-align:center;
+  border-bottom:2px solid #123c69;
+  padding-bottom:10px;
+  margin-bottom:12px;
+}
+.slip-header h1{margin:0;font-size:20px;color:#123c69;}
+.slip-header p{margin:4px 0 0;font-size:12.5px;color:#475569;}
+.slip-meta{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:6px 14px;
+  font-size:12.5px;
+  margin-bottom:12px;
+  background:#f8fafc;
+  padding:10px;
+  border-radius:6px;
+  border:1px solid #e2e8f0;
+}
+.slip-table{
+  width:100%;
+  min-width:0 !important;
+  border-collapse:collapse;
+  margin:10px 0;
+  font-size:12.5px;
+}
+.slip-table th,.slip-table td{border:1px solid #cbd5e1;padding:7px 9px;}
+.slip-table th{background:#e6eff8;color:#123c69;}
+.slip-net-box{
+  background:#e8f5e9;
+  border:1.5px solid #147d54;
+  border-radius:8px;
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:16px;
+  font-weight:700;
+  color:#0f5132;
+  margin-top:10px;
+}
+.slip-sign{
+  display:flex;
+  justify-content:space-between;
+  margin-top:28px;
+  font-size:12px;
+  color:#475569;
+}
+.slip-sign div{
+  border-top:1px solid #64748b;
+  padding-top:4px;
+  min-width:140px;
+  text-align:center;
+}
+@media(max-width:520px){
+  .grid{grid-template-columns:1fr 1fr;}
+  .grid-3{grid-template-columns:1fr 1fr;}
+  .dash-sub-grid{grid-template-columns:1fr 1fr;}
+  .stat b{font-size:14.5px;}
+  .dash-net-val{font-size:23px;}
+  .slip-meta{grid-template-columns:1fr;}
 }
 @media print{
- header,.no-print,button{display:none!important}
- body{background:white}
- .card{box-shadow:none;break-inside:avoid}
+  body *{visibility:hidden;}
+  #slipModal, #slipModal *{visibility:visible;}
+  #slipModal{
+    position:absolute;
+    inset:0;
+    background:#fff;
+    padding:0;
+    display:block !important;
+    overflow:visible;
+  }
+  .modal-box{box-shadow:none;max-height:none;padding:0;max-width:100%;}
+  .no-print{display:none !important;}
+  .slip-paper{border:1px solid #123c69;}
 }
 </style>
 </head>
 
-<body>
-<header>BIVAS SALARY MANAGER</header>
+
+
+ <body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <button class="menu-btn" onclick="openMenu()" aria-label="Menu">☰</button>
+      <div style="min-width:0">
+        <div class="header-title" onclick="switchTab('attendance')">BIVAS SALARY MANAGER</div>
+        <div class="header-sub" id="headerSub">দৈনিক Attendance • Bivas Mondal</div>
+      </div>
+    </div>
+    <div class="header-avatar" id="headerAvatar" title="My Profile" onclick="switchTab('profile')">BM</div>
+  </div>
+</header>
+
+<!-- SLIDE-OUT MENU BAR -->
+<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
+<aside id="sideMenu" class="side-menu" aria-label="Main Menu">
+  <div class="side-menu-header">
+    <button class="side-close" onclick="closeMenu()" aria-label="Close">✕</button>
+    <div class="side-user">
+      <div class="side-avatar" id="sideAvatar">BM</div>
+      <div>
+        <div class="side-name" id="sideName">Bivas Mondal</div>
+        <div class="side-role" id="sideRole">Salary Manager</div>
+      </div>
+    </div>
+  </div>
+  <nav class="side-nav">
+    <button class="menu-item active" data-tab="attendance" onclick="switchTab('attendance')">
+      <span class="menu-icon">📅</span><span>দৈনিক Attendance (Home)</span>
+    </button>
+    <button class="menu-item" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <span class="menu-icon">📊</span><span>Live Dashboard</span>
+    </button>
+    <button class="menu-item" data-tab="history" onclick="switchTab('history')">
+      <span class="menu-icon">📜</span><span>Salary History</span>
+    </button>
+    <button class="menu-item" onclick="closeMenu();openSalarySlip(displayedMonthKey)">
+      <span class="menu-icon">📄</span><span>Salary Slip PDF</span>
+    </button>
+    <div class="menu-divider"></div>
+    <button class="menu-item" data-tab="profile" onclick="switchTab('profile')">
+      <span class="menu-icon">👤</span><span>My Profile</span>
+    </button>
+    <button class="menu-item" data-tab="backup" onclick="switchTab('backup')">
+      <span class="menu-icon">☁️</span><span>Backup &amp; Reminder</span>
+    </button>
+    <div class="menu-divider"></div>
+    <button class="menu-item" onclick="closeMenu();exportExcel()">
+      <span class="menu-icon">📥</span><span>Excel Download</span>
+    </button>
+    <button class="menu-item" onclick="closeMenu();changePassword()">
+      <span class="menu-icon">🔒</span><span>Password পরিবর্তন</span>
+    </button>
+  </nav>
+  <div class="side-footer">
+    <span>BIVAS SALARY MANAGER</span>
+    <span id="sideMonthTag"></span>
+  </div>
+</aside>
 
 <main class="wrap">
+  <!-- IN-APP REMINDER BANNER -->
+  <div id="reminderBanner" class="reminder-banner hidden">
+    <span id="reminderBannerText"></span>
+    <button class="sm secondary" onclick="dismissBanner()">ঠিক আছে</button>
+  </div>
 
-<div class="card no-print">
- <div class="nav">
-  <button onclick="go('profile')">My Profile</button>
-  <button onclick="go('dashboard')">Dashboard</button>
-  <button onclick="go('attendanceSection')">Attendance</button>
-  <button onclick="go('salarySection')">Salary</button>
-  <button onclick="go('backupSection')">Backup</button>
- </div>
+  <!-- HOME SCREEN: DAILY ATTENDANCE, SETTINGS, SUMMARY & HOLIDAYS -->
+  <div id="tab-attendance" class="tab-pane">
+    <section class="card">
+      <h2>
+        <span>দৈনিক Attendance Entry</span>
+        <span class="badge" id="attMonthBadge"></span>
+      </h2>
+      <div class="actions" style="margin-top:0;margin-bottom:8px">
+        <button class="sm" onclick="scrollToToday()">আজকের তারিখ</button>
+        <button class="sm success" onclick="saveData()">ডেটা Save</button>
+        <button class="sm secondary" onclick="switchTab('dashboard')">Live Dashboard</button>
+        <button class="sm secondary" onclick="openSalarySlip(displayedMonthKey)">Salary Slip PDF</button>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>তারিখ</th>
+              <th>দিন</th>
+              <th>ধরন</th>
+              <th>In Time</th>
+              <th>Out Time</th>
+              <th>Worked</th>
+              <th>Regular</th>
+              <th>OT</th>
+            </tr>
+          </thead>
+          <tbody id="attendance"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>মাস ও বেতনের সেটিংস</h2>
+      <div class="grid">
+        <div>
+          <label>বছর</label>
+          <input id="year" type="number" value="2026">
+        </div>
+        <div>
+          <label>মাস নির্বাচন করুন</label>
+          <select id="month">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+        <div>
+          <label>মাসিক Basic Salary (₹)</label>
+          <input id="salary" type="number" value="0" step="0.01">
+        </div>
+        <div>
+          <label>প্রতিদিনের Duty Hours</label>
+          <input id="dailyHours" type="number" value="9" step="0.25">
+        </div>
+        <div>
+          <label>সর্বোচ্চ CL Adjustment</label>
+          <input id="clHours" type="number" value="18" step="0.25">
+        </div>
+        <div>
+          <label>EPF Deduction (₹)</label>
+          <input id="epf" type="number" value="1417.50" step="0.01">
+        </div>
+        <div>
+          <label>Mediclaim (₹)</label>
+          <input id="mediclaim" type="number" value="250" step="0.01">
+        </div>
+        <div>
+          <label>Professional Tax (₹)</label>
+          <input id="ptax" type="number" value="120" step="0.01">
+        </div>
+      </div>
+      <div class="actions">
+        <button onclick="saveData()">ডেটা Save</button>
+        <button class="secondary" onclick="changePassword()">Password পরিবর্তন</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Salary Summary <span class="badge green">Live Auto-Update</span></h2>
+      <div class="grid" id="summary"></div>
+      <div class="actions">
+        <button onclick="saveData()">ডেটা Save</button>
+        <button class="success" onclick="openSalarySlip(displayedMonthKey)">Salary Slip PDF</button>
+        <button class="secondary" onclick="exportExcel()">Download &amp; Open Excel</button>
+        <button class="secondary" onclick="switchTab('backup')">Backup / Restore</button>
+      </div>
+      <div id="downloadFallback" class="notice hidden">
+        ডাউনলোড শুরু না হলে এখানে ট্যাপ করুন:
+        <a id="downloadLink" href="#" download style="font-weight:700;color:#123c69">Excel ফাইল Download</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Holiday List</h2>
+      <div class="row">
+        <div>
+          <label>Holiday Date</label>
+          <input id="holidayDate" type="date">
+        </div>
+        <div>
+          <label>কারণ / নাম</label>
+          <input id="holidayName" placeholder="যেমন: Puja Holiday">
+        </div>
+        <div style="flex:0">
+          <button onclick="addHoliday()">যোগ করুন</button>
+        </div>
+      </div>
+      <div id="holidayList" style="margin-top:8px"></div>
+    </section>
+  </div>
+
+
+   <!-- MENU VIEW: LIVE DASHBOARD -->
+  <div id="tab-dashboard" class="tab-pane hidden">
+    <section class="card">
+      <h2>
+        <span>Live Salary Dashboard</span>
+        <span class="badge" id="dashMonthBadge">November 2026</span>
+      </h2>
+      <div class="dash-hero">
+        <div class="dash-hero-top">
+          <div>
+            <div class="dash-net-label">মোট প্রাপ্য বেতন (TOTAL SALARY - Live)</div>
+            <div class="dash-net-val" id="dashTotalSalary">₹0.00</div>
+          </div>
+          <div style="text-align:right">
+            <div class="dash-net-label" id="dashEmpLine">Bivas Mondal</div>
+            <div class="dash-net-label" id="dashTodayStatus">আজকের এন্ট্রি: বাকি</div>
+          </div>
+        </div>
+        <div class="dash-sub-grid">
+          <div class="dash-mini">
+            <span>1st Payment</span>
+            <b id="dashFirstPay">₹0.00</b>
+          </div>
+          <div class="dash-mini">
+            <span>2nd Payment</span>
+            <b id="dashSecondPay">₹0.00</b>
+          </div>
+          <div class="dash-mini">
+            <span>Daily Attendance OT</span>
+            <b id="dashDailyOT">0 ঘ 0 মি</b>
+          </div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>কাজের অগ্রগতি (Worked / Required)</span>
+            <span id="dashProgressText">0 ঘ 0 মি / 0 ঘ 0 মি (0%)</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="dashProgressFill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" id="dashQuickStats"></div>
+
+      <div class="actions">
+        <button onclick="switchTab('attendance');scrollToToday()">← Attendance-এ ফিরুন</button>
+        <button class="success" onclick="openSalarySlip(displayedMonthKey)">Salary Slip PDF</button>
+        <button class="secondary" onclick="exportExcel()">Excel Download</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- MENU VIEW: SALARY HISTORY -->
+  <div id="tab-history" class="tab-pane hidden">
+    <section class="card">
+      <h2>
+        <span>নির্দিষ্ট মাসের হিসাব দেখুন</span>
+        <button class="sm secondary" onclick="switchTab('attendance')">← Attendance</button>
+      </h2>
+      <div class="row">
+        <div>
+          <label>বছর</label>
+          <input id="historyYear" type="number" value="2026">
+        </div>
+        <div>
+          <label>মাস</label>
+          <select id="historyMonth">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+        <div style="flex:0">
+          <button onclick="showHistory()">হিসাব দেখুন</button>
+        </div>
+      </div>
+      <div id="historyResult" style="margin-top:10px"></div>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span>সমস্ত মাসের Salary History</span>
+        <span class="badge" id="historyCountBadge">0 মাস</span>
+      </h2>
+      <div class="grid-3" id="historyYearTotals" style="margin-bottom:12px"></div>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>মাস</th>
+              <th>Basic (₹)</th>
+              <th>Worked</th>
+              <th>Required</th>
+              <th>Daily OT</th>
+              <th>1st Pay</th>
+              <th>2nd Pay</th>
+              <th>Total Salary</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- MENU VIEW: MY PROFILE -->
+  <div id="tab-profile" class="tab-pane hidden">
+    <section class="card">
+      <h2>
+        <span>My Profile</span>
+        <button class="sm secondary" onclick="switchTab('attendance')">← Attendance</button>
+      </h2>
+      <div class="profile-top">
+        <div class="profile-photo-box" id="profilePhotoPreview">BM</div>
+        <div>
+          <input type="file" id="profilePhotoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+          <button class="sm" onclick="$('profilePhotoInput').click()">ছবি আপলোড করুন</button>
+          <button class="sm secondary" onclick="removeProfilePhoto()">ছবি মুছুন</button>
+          <div class="muted" style="margin-top:4px">পাসপোর্ট সাইজ ছবি দিন (অটো রিসাইজ হবে)</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label>পূর্ণ নাম (Full Name)</label>
+          <input id="prof_name" placeholder="যেমন: Bivas Mondal">
+        </div>
+        <div>
+          <label>Employee ID</label>
+          <input id="prof_empId" placeholder="যেমন: EMP-101">
+        </div>
+        <div>
+          <label>পদবী (Designation)</label>
+          <input id="prof_designation" placeholder="যেমন: Staff / Operator">
+        </div>
+        <div>
+          <label>বিভাগ (Department)</label>
+          <input id="prof_department" placeholder="যেমন: Operations">
+        </div>
+        <div>
+          <label>কোম্পানির নাম (Company Name)</label>
+          <input id="prof_company" placeholder="কোম্পানির নাম লিখুন">
+        </div>
+        <div>
+          <label>যোগদানের তারিখ (Joining Date)</label>
+          <input id="prof_joinDate" type="date">
+        </div>
+        <div>
+          <label>মোবাইল নম্বর</label>
+          <input id="prof_phone" type="tel" placeholder="10 সংখ্যার নম্বর">
+        </div>
+        <div>
+          <label>ইমেল (Email)</label>
+          <input id="prof_email" type="email" placeholder="example@email.com">
+        </div>
+        <div>
+          <label>ব্যাংকের নাম (Bank Name)</label>
+          <input id="prof_bank" placeholder="যেমন: State Bank of India">
+        </div>
+        <div>
+          <label>অ্যাকাউন্ট নম্বর (Account No.)</label>
+          <input id="prof_account" placeholder="Bank A/C Number">
+        </div>
+        <div>
+          <label>UAN / EPF নম্বর</label>
+          <input id="prof_uan" placeholder="UAN / PF Number">
+        </div>
+        <div>
+          <label>ঠিকানা / লোকেশন</label>
+          <input id="prof_address" placeholder="যেমন: Kolkata, WB">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="success" onclick="saveProfile()">Profile Save করুন</button>
+        <button class="secondary" onclick="openSalarySlip(displayedMonthKey)">Salary Slip প্রিভিউ</button>
+      </div>
+      <div id="profileSavedMsg" class="notice ok hidden">Profile সফলভাবে Save হয়েছে!</div>
+    </section>
+  </div>
+
+
+
+
+   <!-- MENU VIEW: BACKUP & REMINDERS -->
+  <div id="tab-backup" class="tab-pane hidden">
+    <section class="card">
+      <h2>
+        <span>Manual Backup &amp; Restore</span>
+        <button class="sm secondary" onclick="switchTab('attendance')">← Attendance</button>
+      </h2>
+      <div style="margin-bottom:8px">
+        <span class="badge green" id="lastBackupBadge">এখনও Backup হয়নি</span>
+      </div>
+      <div class="muted" style="margin-bottom:8px">
+        সমস্ত Attendance, Salary Settings, Holiday, Profile, এবং Password একসাথে সুরক্ষিতভাবে Backup হবে।
+      </div>
+      <div class="actions">
+        <button onclick="backup()">Backup Download (.json)</button>
+        <button class="secondary" onclick="shareBackup()">Backup Share</button>
+        <button class="secondary" onclick="copyBackupText()">Backup Copy</button>
+        <button class="success" onclick="$('restorePick').click()">File থেকে Restore</button>
+        <input id="restorePick" class="hidden" type="file" accept=".json,application/json,text/plain,*/*" onchange="restore(event)">
+      </div>
+
+      <div id="backupFallback" class="notice hidden">
+        ফাইল অটো-ডাউনলোড না হলে নিচের লিংকে ট্যাপ করে সেভ করুন:<br>
+        <a id="backupDownloadLink" href="#" download style="font-weight:700;color:#123c69">Backup ফাইল Download করুন</a>
+      </div>
+
+      <h3>ফাইল সিলেক্ট করতে সমস্যা হলে (Paste করে Restore)</h3>
+      <textarea id="pasteRestoreBox" rows="3" placeholder="কপি করা Backup JSON টেক্সট এখানে Paste করে নিচের বাটনে চাপুন..."></textarea>
+      <div class="actions">
+        <button class="secondary" onclick="restoreFromText()">Paste করা ডেটা Restore করুন</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span>Automatic Backup (স্বয়ংক্রিয় ব্যাকআপ)</span>
+        <span class="badge" id="autoBackupCount">0 স্ন্যাপশট</span>
+      </h2>
+      <div class="toggle-row">
+        <div>
+          <b>Automatic Backup চালু রাখুন</b>
+          <div class="muted">প্রতিবার ডেটা Save করলে বা নির্দিষ্ট সময় পরপর অটো ব্যাকআপ সংরক্ষিত হবে</div>
+        </div>
+        <input type="checkbox" id="autoBackupEnabled" checked onchange="saveAutoBackupSettings()">
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label>অটো ব্যাকআপের সময়কাল</label>
+          <select id="autoBackupFreq" onchange="saveAutoBackupSettings()">
+            <option value="on_save">প্রতিবার ডেটা Save-এ</option>
+            <option value="daily">প্রতিদিন (২৪ ঘণ্টা পরপর)</option>
+            <option value="weekly">প্রতি সপ্তাহে (৭ দিন পরপর)</option>
+          </select>
+        </div>
+        <div style="flex:0">
+          <button class="secondary" onclick="runAutoBackup(true)">এখনই স্ন্যাপশট নিন</button>
+        </div>
+      </div>
+      <h3>সংরক্ষিত অটো ব্যাকআপ (সর্বোচ্চ ৫টি)</h3>
+      <div id="autoBackupList" class="muted">এখনও কোনো অটো ব্যাকআপ নেই।</div>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span>Notification ও Reminder</span>
+        <span class="badge" id="notifPermBadge">চেক হচ্ছে...</span>
+      </h2>
+      <div class="actions" style="margin-top:0;margin-bottom:8px">
+        <button onclick="requestNotifPermission()">Notification চালু করুন</button>
+        <button class="secondary" onclick="sendTestNotification()">Test Notification</button>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <b>দৈনিক Attendance Reminder</b>
+          <div class="muted">অ্যাপ খোলা থাকলে নির্দিষ্ট সময়ে In/Out Time দেওয়ার রিমাইন্ডার দেখাবে</div>
+        </div>
+        <input type="checkbox" id="remEnabled" checked onchange="saveReminderSettings()">
+      </div>
+      <div class="grid" style="margin-top:10px">
+        <div>
+          <label>In Time Reminder (সকাল)</label>
+          <input id="remInTime" type="time" value="09:00" onchange="saveReminderSettings()">
+        </div>
+        <div>
+          <label>Out Time Reminder (সন্ধ্যা)</label>
+          <input id="remOutTime" type="time" value="18:30" onchange="saveReminderSettings()">
+        </div>
+      </div>
+      <div class="toggle-row" style="margin-top:6px">
+        <div>
+          <b>সাপ্তাহিক Backup Reminder</b>
+          <div class="muted">৭ দিনের বেশি Manual Backup না করলে সতর্কবার্তা দেখাবে</div>
+        </div>
+        <input type="checkbox" id="remBackupEnabled" checked onchange="saveReminderSettings()">
+      </div>
+      <div class="notice">
+        নোট: ব্রাউজার বা Android WebView-তে ব্যাকগ্রাউন্ড নোটিফিকেশন বন্ধ থাকলে অ্যাপ খোলার সাথে সাথেই উপরের হলুদ ব্যানারে রিমাইন্ডার দেখানো হবে।
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- SALARY SLIP PDF MODAL -->
+<div id="slipModal" class="modal-backdrop hidden">
+  <div class="modal-box">
+    <div class="actions no-print" style="justify-content:space-between;margin-top:0;margin-bottom:10px">
+      <div>
+        <button class="success" onclick="printSalarySlip()">PDF Save / Print করুন</button>
+        <button class="secondary" onclick="downloadSlipHTML()">Slip ফাইল Download</button>
+      </div>
+      <button class="danger" onclick="closeSalarySlip()">বন্ধ করুন</button>
+    </div>
+    <div id="slipContent" class="slip-paper"></div>
+  </div>
 </div>
-<section class="card" id="profile">
-<h2>My Profile</h2>
 
-<div class="grid">
- <div>
-  <label>Employee Name</label>
-  <input id="employeeName" placeholder="আপনার নাম">
- </div>
- <div>
-  <label>Employee ID</label>
-  <input id="employeeId" placeholder="Employee ID">
- </div>
- <div>
-  <label>Designation</label>
-  <input id="designation" placeholder="পদবি">
- </div>
- <div>
-  <label>Company Name</label>
-  <input id="companyName" placeholder="কোম্পানির নাম">
- </div>
- <div>
-  <label>Mobile Number</label>
-  <input id="mobile" type="tel">
- </div>
- <div>
-  <label>Joining Date</label>
-  <input id="joiningDate" type="date">
- </div>
-</div>
 
-<button onclick="saveProfile()">Profile Save</button>
-</section>
 
-<section class="card" id="dashboard">
-<h2>Dashboard</h2>
-<div class="grid" id="dashboardStats"></div>
-</section>
 
-<section class="card" id="attendanceSection">
-<h2>দৈনিক Attendance Entry</h2>
 
-<div class="tablewrap">
-<table>
-<thead>
-<tr>
-<th>তারিখ</th>
-<th>দিন</th>
-<th>ধরন</th>
-<th>In Time</th>
-<th>Out Time</th>
-<th>Worked</th>
-<th>Regular</th>
-<th>OT</th>
-</tr>
-</thead>
-<tbody id="attendance"></tbody>
-</table>
-</div>
-</section>
-<section class="card" id="salarySection">
-<h2>মাস ও বেতনের সেটিংস</h2>
+  <script>
+/* ===== BASIC VARIABLES ===== */
+const $ = id => document.getElementById(id);
+const months = [
+  'January','February','March','April',
+  'May','June','July','August',
+  'September','October','November','December'
+];
+const SET_KEYS = [
+  'salary','dailyHours','clHours',
+  'epf','mediclaim','ptax'
+];
+const PROFILE_KEYS = [
+  'name','empId','designation','department',
+  'company','joinDate','phone','email',
+  'bank','account','uan','address'
+];
+const TAB_TITLES = {
+  attendance: 'দৈনিক Attendance',
+  dashboard: 'Live Dashboard',
+  history: 'Salary History',
+  profile: 'My Profile',
+  backup: 'Backup & Reminder'
+};
 
-<div class="grid">
- <div>
-  <label>বছর</label>
-  <input id="year" type="number" value="2026">
- </div>
- <div>
-  <label>মাস</label>
-  <select id="month">
-   <option value="0">January</option>
-   <option value="1">February</option>
-   <option value="2">March</option>
-   <option value="3">April</option>
-   <option value="4">May</option>
-   <option value="5">June</option>
-   <option value="6">July</option>
-   <option value="7">August</option>
-   <option value="8">September</option>
-   <option value="9">October</option>
-   <option value="10">November</option>
-   <option value="11">December</option>
-  </select>
- </div>
- <div>
-  <label>Monthly Basic Salary (₹)</label>
-  <input id="salary" type="number" value="23625">
- </div>
- <div>
-  <label>Daily Duty Hours</label>
-  <input id="dailyHours" type="number" value="9" step=".25">
- </div>
- <div>
-  <label>Maximum CL Hours</label>
-  <input id="clHours" type="number" value="18">
- </div>
- <div>
-  <label>EPF (₹)</label>
-  <input id="epf" type="number" value="1417.50">
- </div>
- <div>
-  <label>Mediclaim (₹)</label>
-  <input id="mediclaim" type="number" value="250">
- </div>
- <div>
-  <label>Professional Tax (₹)</label>
-  <input id="ptax" type="number" value="120">
- </div>
-</div>
+let records = {};
+let holidays = [];
+let monthSettings = {};
+let profile = {
+  name: 'Bivas Mondal',
+  empId: '',
+  designation: '',
+  department: '',
+  company: '',
+  joinDate: '',
+  phone: '',
+  email: '',
+  bank: '',
+  account: '',
+  uan: '',
+  address: '',
+  photo: ''
+};
+let autoBackupCfg = { enabled: true, freq: 'on_save', lastAuto: 0, lastManual: 0 };
+let autoBackups = [];
+let reminderCfg = { enabled: true, inTime: '09:00', outTime: '18:30', backupReminder: true };
+let displayedMonthKey = null;
+let currentSlipMonthKey = null;
+let currentTab = 'attendance';
+let firedReminders = {};
 
-<button onclick="saveData()">ডেটা Save</button>
-<button class="secondary" onclick="changePassword()">Password পরিবর্তন</button>
+/* ===== SLIDE-OUT MENU BAR & NAVIGATION ===== */
+function openMenu(){
+  $('sideMenu').classList.add('open');
+  $('menuOverlay').classList.add('open');
+}
+function closeMenu(){
+  $('sideMenu').classList.remove('open');
+  $('menuOverlay').classList.remove('open');
+}
+function switchTab(tabName){
+  currentTab = tabName;
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.menu-item[data-tab]').forEach(b => b.classList.remove('active'));
+  const target = $('tab-' + tabName);
+  if(target) target.classList.remove('hidden');
+  const btn = document.querySelector(`.menu-item[data-tab="${tabName}"]`);
+  if(btn) btn.classList.add('active');
 
-<h2 style="margin-top:20px">Salary Summary</h2>
-<div class="grid" id="summary"></div>
+  updateHeaderSubtitle();
+  closeMenu();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
-<div class="no-print">
- <button class="green" onclick="salarySlip()">Salary Slip PDF</button>
- <button class="secondary" onclick="exportExcel()">Download Excel/CSV</button>
-</div>
-</section>
+  if(tabName === 'history') renderAllHistory();
+  if(tabName === 'backup') {
+    renderAutoBackupList();
+    updateNotifBadge();
+  }
+}
+function updateHeaderSubtitle(){
+  const displayName = (profile.name || 'Bivas Mondal').trim();
+  const pageTitle = TAB_TITLES[currentTab] || 'দৈনিক Attendance';
+  $('headerSub').textContent = `${pageTitle} • ${displayName}`;
+}
 
- <section class="card" id="holidaySection">
-<h2>Holiday List</h2>
-
-<div class="row">
- <div>
-  <label>Holiday Date</label>
-  <input id="holidayDate" type="date">
- </div>
- <div>
-  <label>Holiday Name</label>
-  <input id="holidayName" placeholder="Puja Holiday">
- </div>
- <button onclick="addHoliday()">যোগ করুন</button>
-</div>
-<div id="holidayList"></div>
-</section>
-
-<section class="card" id="historySection">
-<h2>Salary History</h2>
-
-<div class="grid">
- <div>
-  <label>বছর</label>
-  <input id="historyYear" type="number">
- </div>
- <div>
-  <label>মাস</label>
-  <select id="historyMonth">
-   <option value="0">January</option>
-   <option value="1">February</option>
-   <option value="2">March</option>
-   <option value="3">April</option>
-   <option value="4">May</option>
-   <option value="5">June</option>
-   <option value="6">July</option>
-   <option value="7">August</option>
-   <option value="8">September</option>
-   <option value="9">October</option>
-   <option value="10">November</option>
-   <option value="11">December</option>
-  </select>
- </div>
-</div>
-
-<button onclick="showHistory()">হিসাব দেখুন</button>
-<div id="historyResult" class="muted"></div>
-</section>
-
- <section class="card" id="backupSection">
-<h2>Backup ও Restore</h2>
-<button onclick="backup()">Backup Download</button>
-<button class="secondary" onclick="$('restorePick').click()">Restore Backup</button>
-<input id="restorePick" class="hidden" type="file"
- accept=".json,application/json" onchange="restore(event)">
-<p class="muted">Backup ফাইল নিরাপদ স্থানে রাখুন।</p>
-
-<h2>Automatic Backup</h2>
-<div id="autoBackupStatus" class="muted"></div>
-<button class="secondary" onclick="autoBackup()">এখনই Local Backup</button>
-
-<h2>Notification & Reminder</h2>
-<button class="secondary" onclick="enableNotifications()">Notification চালু করুন</button>
-<button class="secondary" onclick="scheduleReminder()">Reminder সেট করুন</button>
-</section>
-
-<script>
-const $=id=>document.getElementById(id);
-const months=['January','February','March','April','May','June',
-'July','August','September','October','November','December'];
-
-const SET_KEYS=['salary','dailyHours','clHours','epf','mediclaim','ptax'];
-
-let records={};
-let holidays=[];
-let monthSettings={};
-let profile={};
-let displayedMonthKey=null;
-
+/* ===== MONTH & DATE KEYS ===== */
 function monthKey(){
- return `${$('year').value}-${String(+$('month').value+1).padStart(2,'0')}`;
+  return `${$('year').value}-${String(+$('month').value+1).padStart(2,'0')}`;
 }
-function num(id){return Math.max(0,Number($(id).value)||0);}
-function dateKey(y,m,d){
- return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+function num(id){
+  return Math.max(0, Number($(id).value) || 0);
 }
-function fmtTime(h){
- let n=Math.round(Math.max(0,h)*60);
- return `${Math.floor(n/60)} ঘ ${n%60} মি`;
+function dateKey(y, m, d){
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 }
-function getWorkedHours(a,b){
- if(!a||!b)return 0;
- let x=a.split(':').map(Number);
- let y=b.split(':').map(Number);
- let s=x[0]*60+x[1],e=y[0]*60+y[1];
- if(s===e)return 0;
- if(e<s)e+=1440;
- return (e-s)/60;
+function todayStr(){
+  const n = new Date();
+  return dateKey(n.getFullYear(), n.getMonth(), n.getDate());
 }
+function fmtDateTime(ts){
+  if(!ts) return 'কখনও নয়';
+  const d = new Date(ts);
+  return d.toLocaleString('en-IN', {
+    day:'2-digit', month:'short', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+}
+
+/* ===== SETTINGS ===== */
 function settingsObject(){
- let s={};
- SET_KEYS.forEach(k=>s[k]=$(k).value);
- return s;
+  let s = {};
+  SET_KEYS.forEach(k => s[k] = $(k).value);
+  return s;
 }
 function saveSettings(){
- monthSettings[monthKey()]=settingsObject();
- localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings));
- localStorage.setItem('bivas-current-settings',JSON.stringify(settingsObject()));
+  monthSettings[monthKey()] = settingsObject();
+  localStorage.setItem('bivas-month-settings', JSON.stringify(monthSettings));
+  localStorage.setItem('bivas-current-settings', JSON.stringify(settingsObject()));
 }
 function applyMonthSettings(k){
- let s=monthSettings[k];
- if(s)SET_KEYS.forEach(x=>{if(s[x]!==undefined)$(x).value=s[x];});
-}
-function saveProfile(){
- profile={};
- ['employeeName','employeeId','designation','companyName','mobile','joiningDate']
- .forEach(k=>profile[k]=$(k).value);
- localStorage.setItem('bivas-profile',JSON.stringify(profile));
- alert('Profile Save হয়েছে।');
-}
-function loadProfile(){
- profile=JSON.parse(localStorage.getItem('bivas-profile')||'{}');
- Object.entries(profile).forEach(([k,v])=>{if($(k))$(k).value=v;});
-}
-function loadData(){
- try{
-  records=JSON.parse(localStorage.getItem('bivas-records')||'{}');
-  holidays=JSON.parse(localStorage.getItem('bivas-holidays')||'[]');
-  monthSettings=JSON.parse(localStorage.getItem('bivas-month-settings')||'{}');
- }catch(e){records={};holidays=[];monthSettings={};}
- loadProfile();
-}
-function holidayName(date){
- let h=holidays.find(x=>x.date===date);
- return h?h.name:'';
-}
-function defaultType(date,day){
- return holidayName(date)?'Holiday':day===0?'Sunday':'Normal';
-}
-function saveCurrentMonth(){
- if(!displayedMonthKey)return;
- if($('attendance').children.length)readRecords(displayedMonthKey);
- localStorage.setItem('bivas-records',JSON.stringify(records));
- saveSettings();
-}
-function readRecords(key){
- let o={};
- document.querySelectorAll('#attendance tr').forEach(tr=>{
-  let el=tr.querySelector('.typ');
-  if(!el)return;
-  o[el.dataset.date]={
-   type:el.value,
-   in:tr.querySelector('.in').value,
-   out:tr.querySelector('.out').value
-  };
- });
- records[key]=o;
- return o;
+  let s = monthSettings[k];
+  if(!s) return;
+  SET_KEYS.forEach(x => {
+    if(s[x] !== undefined){
+      $(x).value = s[x];
+    }
+  });
 }
 
- <script>
+/* ===== TIME FORMAT ===== */
+function fmtTime(hours){
+  let mins = Math.round(Math.max(0, hours) * 60);
+  return `${Math.floor(mins/60)} ঘ ${mins%60} মি`;
+}
+
+/* ===== PASSWORD ===== */
 function hashPassword(p){
- let h=2166136261;
- for(let i=0;i<p.length;i++){
-  h^=p.charCodeAt(i);
-  h=Math.imul(h,16777619);
- }
- return (h>>>0).toString(16);
+  let h = 2166136261;
+  for(let i=0; i<p.length; i++){
+    h ^= p.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(16);
 }
 function ensurePassword(){
- let stored=localStorage.getItem('bivas-time-password');
- if(!stored){
-  let p=prompt('নতুন Password তৈরি করুন');
-  if(!p||p.length<4){alert('কমপক্ষে ৪ অক্ষর দিন');return false;}
-  localStorage.setItem('bivas-time-password',hashPassword(p));
+  let stored = localStorage.getItem('bivas-time-password');
+  if(!stored){
+    let p = prompt('নতুন Password তৈরি করুন:');
+    if(!p) return false;
+    if(p.length < 4){
+      alert('কমপক্ষে ৪ অক্ষরের Password দিন।');
+      return false;
+    }
+    localStorage.setItem('bivas-time-password', hashPassword(p));
+    return true;
+  }
+  let p = prompt('Password দিন:');
+  if(p === null) return false;
+  if(hashPassword(p) !== stored){
+    alert('ভুল Password।');
+    return false;
+  }
   return true;
- }
- let p=prompt('Password দিন');
- if(p===null||hashPassword(p)!==stored){
-  alert('ভুল Password');return false;
- }
- return true;
 }
 function changePassword(){
- let old=localStorage.getItem('bivas-time-password');
- if(old){
-  let p=prompt('বর্তমান Password দিন');
-  if(p===null||hashPassword(p)!==old){alert('Password ভুল');return;}
- }
- let n=prompt('নতুন Password দিন');
- if(!n||n.length<4){alert('কমপক্ষে ৪ অক্ষর দিন');return;}
- localStorage.setItem('bivas-time-password',hashPassword(n));
- alert('Password পরিবর্তন হয়েছে');
+  let old = localStorage.getItem('bivas-time-password');
+  if(old){
+    let p = prompt('বর্তমান Password দিন:');
+    if(p === null || hashPassword(p) !== old){
+      alert('বর্তমান Password সঠিক নয়।');
+      return;
+    }
+  }
+  let n = prompt('নতুন Password দিন:');
+  if(!n || n.length < 4){
+    alert('কমপক্ষে ৪ অক্ষরের Password দিন।');
+    return;
+  }
+  localStorage.setItem('bivas-time-password', hashPassword(n));
+  alert('Password পরিবর্তন হয়েছে।');
 }
 
+/* ===== HOLIDAYS & DATA LOAD ===== */
+function holidayName(date){
+  let h = holidays.find(x => x.date === date);
+  return h ? h.name : '';
+}
+function defaultType(date, day){
+  return holidayName(date)
+    ? 'Holiday'
+    : day === 0
+      ? 'Sunday'
+      : 'Normal';
+}
+function loadData(){
+  try{
+    records = JSON.parse(localStorage.getItem('bivas-records') || '{}');
+    holidays = JSON.parse(localStorage.getItem('bivas-holidays') || '[]');
+    monthSettings = JSON.parse(localStorage.getItem('bivas-month-settings') || '{}');
+    const savedProf = JSON.parse(localStorage.getItem('bivas-profile') || 'null');
+    if(savedProf) profile = Object.assign(profile, savedProf);
+    const savedAutoCfg = JSON.parse(localStorage.getItem('bivas-auto-backup-cfg') || 'null');
+    if(savedAutoCfg) autoBackupCfg = Object.assign(autoBackupCfg, savedAutoCfg);
+    autoBackups = JSON.parse(localStorage.getItem('bivas-auto-backups') || '[]');
+    const savedRem = JSON.parse(localStorage.getItem('bivas-reminder-cfg') || 'null');
+    if(savedRem) reminderCfg = Object.assign(reminderCfg, savedRem);
+  }catch(e){
+    records = {};
+    holidays = [];
+    monthSettings = {};
+  }
+}
+
+/* ===== READ & SAVE ATTENDANCE ===== */
+function readRecords(targetKey){
+  let o = {};
+  document.querySelectorAll('#attendance tr').forEach(tr => {
+    let el = tr.querySelector('.typ');
+    if(!el) return;
+    let date = el.dataset.date;
+    o[date] = {
+      type: el.value,
+      in: tr.querySelector('.in').value,
+      out: tr.querySelector('.out').value
+    };
+  });
+  records[targetKey] = o;
+  return o;
+}
+function saveCurrentMonth(){
+  if(!displayedMonthKey) return;
+  if($('attendance').children.length){
+    readRecords(displayedMonthKey);
+  }
+  localStorage.setItem('bivas-records', JSON.stringify(records));
+  saveSettings();
+}
+
+/* ===== RENDER MONTH CALENDAR ===== */
 function renderMonth(){
- let yr=Number($('year').value),mo=Number($('month').value);
- if(!Number.isInteger(yr)||yr<2000||yr>2100)return;
- if(displayedMonthKey)saveCurrentMonth();
- let target=monthKey();
- if(target!==displayedMonthKey)applyMonthSettings(target);
- displayedMonthKey=target;
-
- let tb=$('attendance');
- tb.innerHTML='';
- let saved=records[target]||{};
- let totalDays=new Date(yr,mo+1,0).getDate();
-
- for(let d=1;d<=totalDays;d++){
-  let dt=dateKey(yr,mo,d);
-  let day=new Date(yr,mo,d).getDay();
-  let r=saved[dt]||{};
-  if(holidayName(dt))r.type='Holiday';
-  else if(!r.type||r.type==='Holiday')r.type=defaultType(dt,day);
-
-  let tr=document.createElement('tr');
-  if(holidayName(dt)||r.type==='Holiday')tr.classList.add('holiday-row');
-  else if(day===0||r.type==='Sunday')tr.classList.add('sunday');
-
-  tr.innerHTML=`
-  <td>${dt}</td>
-  <td>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]}</td>
-  <td><select class="typ" data-date="${dt}">
-   ${['Normal','Sunday','Holiday','Off','CL'].map(t=>
-    `<option ${r.type===t?'selected':''}>${t}</option>`).join('')}
-  </select>
-  ${holidayName(dt)?`<div class="muted">${holidayName(dt)}</div>`:''}
-  </td>
-  <td><input type="time" class="in" value="${r.in||''}"></td>
-  <td><input type="time" class="out" value="${r.out||''}"></td>
-  <td class="worked">0 ঘ 0 মি</td>
-  <td class="regular">0 ঘ 0 মি</td>
-  <td class="ot">0 ঘ 0 মি</td>`;
-  tb.appendChild(tr);
- }
-
- document.querySelectorAll('#attendance input[type=time]').forEach(el=>{
-  el.dataset.last=el.value;
-  el.addEventListener('change',()=>{
-   if(el.value!==el.dataset.last){
-    let v=el.value;
-    if(!ensurePassword()){el.value=el.dataset.last;calculate();return;}
-    el.dataset.last=v;
+  let yr = Number($('year').value);
+  let mo = Number($('month').value);
+  if(!Number.isInteger(yr) || yr < 2000 || yr > 2100 ||
+     !Number.isInteger(mo) || mo < 0 || mo > 11){
+    alert('সঠিক বছর ও মাস নির্বাচন করুন।');
+    return;
+  }
+  let target = monthKey();
+  if(displayedMonthKey){
     saveCurrentMonth();
-    calculate();
-   }
-  });
- });
+  }
+  if(target !== displayedMonthKey){
+    if(monthSettings[target]){
+      applyMonthSettings(target);
+    }
+  }
+  displayedMonthKey = target;
+  if(!monthSettings[target]){
+    monthSettings[target] = settingsObject();
+  }
 
- document.querySelectorAll('.typ').forEach(el=>{
-  el.addEventListener('change',()=>{
-   if(holidayName(el.dataset.date))el.value='Holiday';
-   saveCurrentMonth();calculate();
+  let label = `${months[mo]} ${yr}`;
+  $('dashMonthBadge').textContent = label;
+  $('attMonthBadge').textContent = label;
+  $('sideMonthTag').textContent = label;
+
+  let totalDays = new Date(yr, mo + 1, 0).getDate();
+  let tb = $('attendance');
+  tb.innerHTML = '';
+  let saved = records[target] || {};
+  let today = todayStr();
+
+  for(let d = 1; d <= totalDays; d++){
+    let dt = dateKey(yr, mo, d);
+    let day = new Date(yr, mo, d).getDay();
+    let r = saved[dt] ? Object.assign({}, saved[dt]) : {};
+
+    if(holidayName(dt)){
+      r.type = 'Holiday';
+    }else if(r.type === 'Holiday'){
+      r.type = day === 0 ? 'Sunday' : 'Normal';
+    }
+    if(!r.type){
+      r.type = defaultType(dt, day);
+    }
+
+    let tr = document.createElement('tr');
+    tr.dataset.date = dt;
+    if(holidayName(dt) || r.type === 'Holiday'){
+      tr.classList.add('holiday-row');
+    }else if(day === 0 || r.type === 'Sunday'){
+      tr.classList.add('Sunday');
+    }
+    if(dt === today){
+      tr.classList.add('today-row');
+    }
+
+    tr.innerHTML = `
+      <td>${dt}${dt===today?' <span class="badge">আজ</span>':''}</td>
+      <td>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]}</td>
+      <td>
+        <select data-date="${dt}" class="typ">
+          <option value="Normal" ${r.type==='Normal'?'selected':''}>Normal</option>
+          <option value="Sunday" ${r.type==='Sunday'?'selected':''}>Sunday</option>
+          <option value="Holiday" ${r.type==='Holiday'?'selected':''}>Holiday</option>
+          <option value="Off" ${r.type==='Off'?'selected':''}>Off</option>
+          <option value="CL" ${r.type==='CL'?'selected':''}>CL</option>
+        </select>
+        ${holidayName(dt)?`<div class="muted">${holidayName(dt)}</div>`:''}
+      </td>
+      <td><input type="time" class="in" value="${r.in||''}"></td>
+      <td><input type="time" class="out" value="${r.out||''}"></td>
+      <td class="worked">0 ঘ 0 মি</td>
+      <td class="regular">0 ঘ 0 মি</td>
+      <td class="ot">0 ঘ 0 মি</td>
+    `;
+    tb.appendChild(tr);
+  }
+
+  /* PASSWORD PROTECTION ON TIME INPUTS */
+  document.querySelectorAll('#attendance input[type="time"]').forEach(el => {
+    el.dataset.last = el.value;
+    el.addEventListener('change', () => {
+      if(el.dataset.processing) return;
+      el.dataset.processing = '1';
+      let newValue = el.value;
+      if(newValue === el.dataset.last){
+        el.dataset.processing = '';
+        return;
+      }
+      if(!ensurePassword()){
+        el.value = el.dataset.last;
+        calculate();
+        el.dataset.processing = '';
+        return;
+      }
+      el.dataset.last = newValue;
+      saveCurrentMonth();
+      calculate();
+      el.dataset.processing = '';
+    });
   });
- });
- readRecords(target);
- calculate();
+
+  /* TYPE CHANGE */
+  document.querySelectorAll('#attendance .typ').forEach(el => {
+    el.addEventListener('change', () => {
+      let dt = el.dataset.date;
+      let tr = el.closest('tr');
+      let day = new Date(dt + 'T12:00:00').getDay();
+      if(holidayName(dt)){
+        el.value = 'Holiday';
+      }
+      tr.classList.remove('Sunday','holiday-row');
+      if(el.value === 'Holiday'){
+        tr.classList.add('holiday-row');
+      }else if(day === 0 || el.value === 'Sunday'){
+        tr.classList.add('Sunday');
+      }
+      saveCurrentMonth();
+      calculate();
+    });
+  });
+
+  records[target] = readRecords(target);
+  calculate();
+}
+
+function scrollToToday(){
+  setTimeout(() => {
+    const row = document.querySelector(`#attendance tr[data-date="${todayStr()}"]`);
+    if(row){
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 150);
+}
+
+
+   /* ===== TIME & EXACT SALARY CALCULATION (UNCHANGED FORMULAS) ===== */
+function getWorkedHours(inTime, outTime){
+  if(!inTime || !outTime) return 0;
+  let a = inTime.split(':').map(Number);
+  let b = outTime.split(':').map(Number);
+  let start = a[0]*60 + a[1];
+  let end = b[0]*60 + b[1];
+  if(start === end) return 0;
+  let diff = end - start;
+  if(diff < 0) diff += 1440;
+  return diff / 60;
+}
+
+function computeMonthMetrics(key, updateDOM){
+  let rs = records[key] || {};
+  let cfg = (key === displayedMonthKey) ? settingsObject() : (monthSettings[key] || {});
+  let salaryVal = Math.max(0, Number(cfg.salary) || 0);
+  let dailyDuty = Math.max(0, Number(cfg.dailyHours) || 0);
+  let clHoursVal = Math.max(0, Number(cfg.clHours) || 0);
+  let epfVal = Math.max(0, Number(cfg.epf) || 0);
+  let mediclaimVal = Math.max(0, Number(cfg.mediclaim) || 0);
+  let ptaxVal = Math.max(0, Number(cfg.ptax) || 0);
+
+  let requiredDays = 0;
+  let presentDays = 0;
+  let total = 0;
+  let totalRegular = 0;
+  let dailyOT = 0;
+
+  for(let [date, r] of Object.entries(rs)){
+    let day = new Date(date + 'T12:00:00').getDay();
+    let type = holidayName(date)
+      ? 'Holiday'
+      : (r.type || defaultType(date, day));
+    let hrs = getWorkedHours(r.in, r.out);
+    let regular = 0;
+    let extra = 0;
+
+    if(hrs > 0) presentDays++;
+
+    /* NORMAL DAY */
+    if(type === 'Normal'){
+      requiredDays++;
+      regular = Math.min(hrs, dailyDuty);
+      extra = Math.max(0, hrs - dailyDuty);
+    }
+    /* SUNDAY AND HOLIDAY */
+    else if(type === 'Sunday' || type === 'Holiday'){
+      extra = hrs;
+    }
+
+    total += hrs;
+    dailyOT += extra;
+    totalRegular += regular;
+
+    if(updateDOM){
+      let tr = document.querySelector(`#attendance .typ[data-date="${date}"]`)?.closest('tr');
+      if(tr){
+        tr.querySelector('.worked').textContent = fmtTime(hrs);
+        tr.querySelector('.regular').textContent = fmtTime(regular);
+        tr.querySelector('.ot').textContent = fmtTime(extra);
+      }
+    }
+  }
+
+  /* REQUIRED DUTY HOURS */
+  let required = requiredDays * dailyDuty;
+  /* BASIC AND HOURLY RATE */
+  let daily = salaryVal / 25;
+  let hourly = dailyDuty > 0 ? daily / dailyDuty : 0;
+  /* CL ADJUSTMENT */
+  let clAdjusted = Math.min(Math.max(0, required - total), clHoursVal);
+  /* SHORTFALL */
+  let shortfall = Math.max(0, required - total - clAdjusted);
+  /* SALARY SUMMARY OT */
+  let summaryOT = Math.max(0, total + clAdjusted - required);
+  /* AVAILABLE CL AFTER ADJUSTMENT */
+  let availableCL = Math.max(0, clHoursVal - clAdjusted);
+  /* FIRST PAYMENT */
+  let deduction = shortfall * hourly;
+  let first = salaryVal - epfVal - mediclaimVal - ptaxVal - deduction;
+  /* SECOND PAYMENT */
+  let second = 0;
+  if(total >= totalRegular){
+    /* NEW FORMULA */
+    second = Math.max(0, (summaryOT + availableCL) * hourly);
+  }else{
+    /* OLD FORMULA */
+    second = Math.max(0, (total + clAdjusted - required) * hourly);
+  }
+  /* TOTAL PAYMENT */
+  let totalSalary = first + second;
+
+  return {
+    key, salary: salaryVal, dailyDuty, clHours: clHoursVal,
+    epf: epfVal, mediclaim: mediclaimVal, ptax: ptaxVal,
+    requiredDays, presentDays, required, total, totalRegular,
+    dailyOT, daily, hourly, clAdjusted, shortfall, summaryOT,
+    availableCL, deduction, first, second, totalSalary
+  };
 }
 
 function calculate(){
- let rs=records[displayedMonthKey]||{};
- let requiredDays=0,total=0,totalRegular=0,dailyOT=0;
- let dailyDuty=num('dailyHours');
+  const m = computeMonthMetrics(displayedMonthKey, true);
 
- for(let [date,r] of Object.entries(rs)){
-  let day=new Date(date+'T12:00:00').getDay();
-  let type=holidayName(date)?'Holiday':(r.type||defaultType(date,day));
-  let hrs=getWorkedHours(r.in,r.out);
-  let regular=0,extra=0;
+  let vals = [
+    ['Daily Basic', `₹${m.daily.toFixed(2)}`],
+    ['Hourly Rate', `₹${m.hourly.toFixed(2)}`],
+    ['Normal Working Days', m.requiredDays],
+    ['Required Duty Hours', fmtTime(m.required)],
+    ['Total Worked Hours', fmtTime(m.total)],
+    ['Total Regular Hours', fmtTime(m.totalRegular)],
+    ['Daily Attendance OT', fmtTime(m.dailyOT)],
+    ['Salary Summary OT', fmtTime(m.summaryOT)],
+    ['Available CL', fmtTime(m.clHours)],
+    ['CL Adjusted', fmtTime(m.clAdjusted)],
+    ['Shortfall', fmtTime(m.shortfall)],
+    ['Shortfall Deduction', `₹${m.deduction.toFixed(2)}`],
+    ['1st Payment', `₹${m.first.toFixed(2)}`],
+    ['2nd Payment', `₹${m.second.toFixed(2)}`],
+    ['TOTAL SALARY', `₹${m.totalSalary.toFixed(2)}`]
+  ];
+  $('summary').innerHTML = vals.map(([k, v]) => `
+    <div class="stat">
+      <label>${k}</label>
+      <b class="${k==='TOTAL SALARY'?'good':(k==='Shortfall Deduction' && m.deduction>0?'bad':'')}">${v}</b>
+    </div>
+  `).join('');
 
-  if(type==='Normal'){
-   requiredDays++;
-   regular=Math.min(hrs,dailyDuty);
-   extra=Math.max(0,hrs-dailyDuty);
-  }else if(type==='Sunday'||type==='Holiday'){
-   extra=hrs;
+  $('dashTotalSalary').textContent = `₹${m.totalSalary.toFixed(2)}`;
+  $('dashFirstPay').textContent = `₹${m.first.toFixed(2)}`;
+  $('dashSecondPay').textContent = `₹${m.second.toFixed(2)}`;
+  $('dashDailyOT').textContent = fmtTime(m.dailyOT);
+
+  let pct = m.required > 0 ? Math.min(100, Math.round((m.total / m.required) * 100)) : 0;
+  $('dashProgressText').textContent = `${fmtTime(m.total)} / ${fmtTime(m.required)} (${pct}%)`;
+  $('dashProgressFill').style.width = `${pct}%`;
+
+  const todayRec = (records[displayedMonthKey] || {})[todayStr()];
+  if(todayRec && todayRec.in && todayRec.out){
+    $('dashTodayStatus').textContent = `আজ: ${todayRec.in} - ${todayRec.out}`;
+  }else if(todayRec && todayRec.in){
+    $('dashTodayStatus').textContent = `আজ In: ${todayRec.in} (Out বাকি)`;
+  }else{
+    $('dashTodayStatus').textContent = 'আজকের এন্ট্রি: বাকি';
   }
 
-  total+=hrs;dailyOT+=extra;totalRegular+=regular;
-  let tr=document.querySelector(`.typ[data-date="${date}"]`)?.closest('tr');
-  if(tr){
-   tr.querySelector('.worked').textContent=fmtTime(hrs);
-   tr.querySelector('.regular').textContent=fmtTime(regular);
-   tr.querySelector('.ot').textContent=fmtTime(extra);
-  }
- }
-
- let required=requiredDays*dailyDuty;
- let salary=num('salary');
- let daily=salary/25;
- let hourly=dailyDuty>0?daily/dailyDuty:0;
-
- let clAdjusted=Math.min(Math.max(0,required-total),num('clHours'));
- let shortfall=Math.max(0,required-total-clAdjusted);
- let summaryOT=Math.max(0,total+clAdjusted-required);
- let availableCL=Math.max(0,num('clHours')-clAdjusted);
- let deduction=shortfall*hourly;
-
- let first=salary-num('epf')-num('mediclaim')-num('ptax')-deduction;
-
- // 2nd Payment Formula: আগের কোডের মতোই রাখা হয়েছে।
- let second=0;
- if(total>=totalRegular){
-  second=Math.max(0,(summaryOT+availableCL)*hourly);
- }else{
-  second=Math.max(0,(total+clAdjusted-required)*hourly);
- }
-
- let totalSalary=first+second;
- window.salaryResult={requiredDays,required,total,totalRegular,dailyOT,
- summaryOT,clAdjusted,shortfall,deduction,first,second,totalSalary,
- daily,hourly};
-
- let vals=[
- ['Daily Basic',`₹${daily.toFixed(2)}`],
- ['Hourly Rate',`₹${hourly.toFixed(2)}`],
- ['Normal Working Days',requiredDays],
- ['Required Duty Hours',fmtTime(required)],
- ['Total Worked Hours',fmtTime(total)],
- ['Total Regular Hours',fmtTime(totalRegular)],
- ['Daily Attendance OT',fmtTime(dailyOT)],
- ['Salary Summary OT',fmtTime(summaryOT)],
- ['CL Adjusted',fmtTime(clAdjusted)],
- ['Shortfall',fmtTime(shortfall)],
- ['Shortfall Deduction',`₹${deduction.toFixed(2)}`],
- ['1st Payment',`₹${first.toFixed(2)}`],
- ['2nd Payment',`₹${second.toFixed(2)}`],
- ['TOTAL SALARY',`₹${totalSalary.toFixed(2)}`]
- ];
- $('summary').innerHTML=vals.map(([k,v])=>
- `<div class="stat"><label>${k}</label><b>${v}</b></div>`).join('');
- updateDashboard();
+  $('dashQuickStats').innerHTML = `
+    <div class="stat"><label>কাজ করেছেন</label><b>${m.presentDays} দিন</b></div>
+    <div class="stat"><label>Summary OT</label><b class="good">${fmtTime(m.summaryOT)}</b></div>
+    <div class="stat"><label>Shortfall</label><b class="${m.shortfall>0?'bad':'good'}">${fmtTime(m.shortfall)}</b></div>
+    <div class="stat"><label>CL Adjusted</label><b>${fmtTime(m.clAdjusted)}</b></div>
+    <div class="stat"><label>Hourly Rate</label><b>₹${m.hourly.toFixed(2)}</b></div>
+    <div class="stat"><label>মোট কাটছাঁট</label><b class="bad">₹${(m.epf+m.mediclaim+m.ptax+m.deduction).toFixed(2)}</b></div>
+  `;
 }
+
+/* ===== SAVE DATA ===== */
 function saveData(){
- saveCurrentMonth();calculate();alert('ডেটা Save হয়েছে।');
+  saveCurrentMonth();
+  calculate();
+  saveSettings();
+  if(autoBackupCfg.enabled && autoBackupCfg.freq === 'on_save'){
+    runAutoBackup(false);
+  }
+  alert('এই মাসের ডেটা Save হয়েছে।');
 }
-</script>
 
- <script>
-function addHoliday(){
- let date=$('holidayDate').value;
- let name=$('holidayName').value.trim();
- if(!date||!name){alert('তারিখ ও নাম দিন');return;}
- holidays=holidays.filter(x=>x.date!==date);
- holidays.push({date,name});
- holidays.sort((a,b)=>a.date.localeCompare(b.date));
- localStorage.setItem('bivas-holidays',JSON.stringify(holidays));
- $('holidayDate').value='';$('holidayName').value='';
- renderHolidayList();renderMonth();
+/* ===== MY PROFILE ===== */
+function renderProfileUI(){
+  PROFILE_KEYS.forEach(k => {
+    if($('prof_' + k)) $('prof_' + k).value = profile[k] || '';
+  });
+  const displayName = (profile.name || 'Bivas Mondal').trim();
+  const initials = displayName.split(/\s+/).map(w => w[0] || '').join('').slice(0,2).toUpperCase() || 'BM';
+  updateHeaderSubtitle();
+  $('dashEmpLine').textContent = profile.empId ? `${displayName} (${profile.empId})` : displayName;
+  $('sideName').textContent = displayName;
+  $('sideRole').textContent = profile.designation || profile.company || 'Salary Manager';
+
+  if(profile.photo){
+    const imgTag = `<img src="${profile.photo}" alt="Profile">`;
+    $('headerAvatar').innerHTML = imgTag;
+    $('sideAvatar').innerHTML = imgTag;
+    $('profilePhotoPreview').innerHTML = imgTag;
+  }else{
+    $('headerAvatar').textContent = initials;
+    $('sideAvatar').textContent = initials;
+    $('profilePhotoPreview').textContent = initials;
+  }
 }
-function renderHolidayList(){
- let box=$('holidayList');box.innerHTML='';
- holidays.forEach((h,i)=>{
-  let div=document.createElement('div');div.className='holiday';
-  div.textContent=h.date+' — '+h.name+' ';
-  let b=document.createElement('button');b.className='danger';
-  b.textContent='মুছুন';
-  b.onclick=()=>{
-   holidays.splice(i,1);
-   localStorage.setItem('bivas-holidays',JSON.stringify(holidays));
-   renderHolidayList();renderMonth();
+function saveProfile(){
+  PROFILE_KEYS.forEach(k => {
+    if($('prof_' + k)) profile[k] = $('prof_' + k).value.trim();
+  });
+  localStorage.setItem('bivas-profile', JSON.stringify(profile));
+  renderProfileUI();
+  $('profileSavedMsg').classList.remove('hidden');
+  setTimeout(() => $('profileSavedMsg').classList.add('hidden'), 3000);
+}
+function handlePhotoUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const img = new Image();
+    img.onload = function(){
+      const canvas = document.createElement('canvas');
+      const max = 200;
+      let w = img.width, h = img.height;
+      if(w > h){ h = Math.round(h * max / w); w = max; }
+      else { w = Math.round(w * max / h); h = max; }
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      profile.photo = canvas.toDataURL('image/jpeg', 0.78);
+      localStorage.setItem('bivas-profile', JSON.stringify(profile));
+      renderProfileUI();
+    };
+    img.src = ev.target.result;
   };
-  div.appendChild(b);box.appendChild(div);
- });
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+function removeProfilePhoto(){
+  profile.photo = '';
+  localStorage.setItem('bivas-profile', JSON.stringify(profile));
+  renderProfileUI();
+}
+
+/* ===== SALARY SLIP PDF ===== */
+function openSalarySlip(key){
+  saveCurrentMonth();
+  currentSlipMonthKey = key || displayedMonthKey;
+  const [yr, mo] = currentSlipMonthKey.split('-');
+  const monthLabel = `${months[Number(mo)-1]} ${yr}`;
+  const m = computeMonthMetrics(currentSlipMonthKey, false);
+  const totalDeductions = m.epf + m.mediclaim + m.ptax + m.deduction;
+
+  $('slipContent').innerHTML = `
+    <div class="slip-header">
+      <h1>${profile.company || 'BIVAS SALARY MANAGER'}</h1>
+      <p><strong>SALARY SLIP — ${monthLabel}</strong></p>
+      ${profile.address ? `<p>${profile.address}</p>` : ''}
+    </div>
+    <div class="slip-meta">
+      <div><b>Employee Name:</b> ${profile.name || 'Bivas Mondal'}</div>
+      <div><b>Employee ID:</b> ${profile.empId || '—'}</div>
+      <div><b>Designation:</b> ${profile.designation || '—'}</div>
+      <div><b>Department:</b> ${profile.department || '—'}</div>
+      <div><b>Bank / A/C:</b> ${profile.bank || '—'} ${profile.account ? '('+profile.account+')' : ''}</div>
+      <div><b>UAN / EPF No:</b> ${profile.uan || '—'}</div>
+      <div><b>Joining Date:</b> ${profile.joinDate || '—'}</div>
+      <div><b>Generated On:</b> ${todayStr()}</div>
+    </div>
+
+    <table class="slip-table">
+      <thead>
+        <tr>
+          <th>Attendance &amp; Hours Details</th>
+          <th>Value</th>
+          <th>Rate Details</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Normal Working Days</td><td>${m.requiredDays} দিন</td>
+          <td>Daily Basic (Basic / 25)</td><td>₹${m.daily.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td>Required Duty Hours</td><td>${fmtTime(m.required)}</td>
+          <td>Hourly Rate</td><td>₹${m.hourly.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td>Total Worked Hours</td><td>${fmtTime(m.total)}</td>
+          <td>Daily Attendance OT</td><td>${fmtTime(m.dailyOT)}</td>
+        </tr>
+        <tr>
+          <td>CL Adjusted / Available CL</td><td>${fmtTime(m.clAdjusted)} / ${fmtTime(m.clHours)}</td>
+          <td>Salary Summary OT</td><td>${fmtTime(m.summaryOT)}</td>
+        </tr>
+        <tr>
+          <td>Shortfall Hours</td><td>${fmtTime(m.shortfall)}</td>
+          <td>Total Regular Hours</td><td>${fmtTime(m.totalRegular)}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="slip-table">
+      <thead>
+        <tr>
+          <th>Earnings (আয়)</th>
+          <th style="text-align:right">Amount (₹)</th>
+          <th>Deductions (কাটছাঁট)</th>
+          <th style="text-align:right">Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Monthly Basic Salary</td>
+          <td style="text-align:right">₹${m.salary.toFixed(2)}</td>
+          <td>EPF Deduction</td>
+          <td style="text-align:right">₹${m.epf.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td>2nd Payment (OT &amp; CL Benefit)</td>
+          <td style="text-align:right">₹${m.second.toFixed(2)}</td>
+          <td>Mediclaim</td>
+          <td style="text-align:right">₹${m.mediclaim.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td></td><td></td>
+          <td>Professional Tax</td>
+          <td style="text-align:right">₹${m.ptax.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td></td><td></td>
+          <td>Shortfall Deduction</td>
+          <td style="text-align:right">₹${m.deduction.toFixed(2)}</td>
+        </tr>
+        <tr style="font-weight:700;background:#f8fafc">
+          <td>Gross Earnings</td>
+          <td style="text-align:right">₹${(m.salary + m.second).toFixed(2)}</td>
+          <td>Total Deductions</td>
+          <td style="text-align:right">₹${totalDeductions.toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="slip-table">
+      <tbody>
+        <tr>
+          <td><b>1st Payment</b> (Basic - Deductions)</td>
+          <td style="text-align:right"><b>₹${m.first.toFixed(2)}</b></td>
+          <td><b>2nd Payment</b></td>
+          <td style="text-align:right"><b>₹${m.second.toFixed(2)}</b></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="slip-net-box">
+      <span>NET PAYABLE SALARY (TOTAL)</span>
+      <span>₹${m.totalSalary.toFixed(2)}</span>
+    </div>
+
+    <div class="slip-sign">
+      <div>Employee Signature</div>
+      <div>Authorized Signatory</div>
+    </div>
+  `;
+  $('slipModal').classList.remove('hidden');
+}
+function closeSalarySlip(){
+  $('slipModal').classList.add('hidden');
+}
+function printSalarySlip(){
+  window.print();
+}
+function downloadSlipHTML(){
+  const html = `<!doctype html><html lang="bn"><head><meta charset="utf-8"><title>Salary Slip ${currentSlipMonthKey}</title><style>body{font-family:Arial,sans-serif;padding:20px;max-width:760px;margin:auto;}.slip-paper{border:1.5px solid #123c69;border-radius:8px;padding:18px;}.slip-header{text-align:center;border-bottom:2px solid #123c69;padding-bottom:10px;margin-bottom:12px;}.slip-header h1{margin:0;color:#123c69;font-size:20px;}.slip-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px;margin-bottom:12px;background:#f8fafc;padding:10px;border:1px solid #e2e8f0;}.slip-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;}.slip-table th,.slip-table td{border:1px solid #cbd5e1;padding:7px 9px;}.slip-table th{background:#e6eff8;color:#123c69;}.slip-net-box{background:#e8f5e9;border:1.5px solid #147d54;padding:12px;display:flex;justify-content:space-between;font-weight:700;color:#0f5132;font-size:16px;margin-top:10px;}.slip-sign{display:flex;justify-content:space-between;margin-top:32px;font-size:12px;}.slip-sign div{border-top:1px solid #64748b;padding-top:4px;min-width:140px;text-align:center;}</style></head><body><div class="slip-paper">${$('slipContent').innerHTML}</div></body></html>`;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SALARY_SLIP_${currentSlipMonthKey}.html`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+   }
+
+
+
+/* ===== HOLIDAY LIST ===== */
+function renderHolidayList(){
+  let box = $('holidayList');
+  box.innerHTML = '';
+  if(!holidays.length){
+    box.innerHTML = '<div class="muted">কোনো Holiday যোগ করা হয়নি।</div>';
+    return;
+  }
+  holidays.forEach((h, index) => {
+    let div = document.createElement('div');
+    div.className = 'holiday';
+    let span = document.createElement('span');
+    span.textContent = h.date + ' — ' + h.name;
+    let btn = document.createElement('button');
+    btn.className = 'danger sm';
+    btn.textContent = 'মুছুন';
+    btn.onclick = () => {
+      holidays.splice(index, 1);
+      localStorage.setItem('bivas-holidays', JSON.stringify(holidays));
+      renderHolidayList();
+      renderMonth();
+    };
+    div.appendChild(span);
+    div.appendChild(btn);
+    box.appendChild(div);
+  });
+}
+function addHoliday(){
+  let date = $('holidayDate').value;
+  let name = $('holidayName').value.trim();
+  if(!date || !name){
+    alert('তারিখ ও Holiday নাম দিন।');
+    return;
+  }
+  holidays = holidays.filter(x => x.date !== date);
+  holidays.push({date, name});
+  holidays.sort((a, b) => a.date.localeCompare(b.date));
+  localStorage.setItem('bivas-holidays', JSON.stringify(holidays));
+  $('holidayDate').value = '';
+  $('holidayName').value = '';
+  renderHolidayList();
+  renderMonth();
+}
+
+/* ===== EXCEL DOWNLOAD ===== */
+function exportExcel(){
+  try{
+    saveCurrentMonth();
+    calculate();
+    let key = displayedMonthKey || monthKey();
+    let rs = records[key] || {};
+    let [year, month] = key.split('-');
+    let rows = [];
+    rows.push(['BIVAS SALARY MANAGER']);
+    rows.push(['Employee', profile.name || 'Bivas Mondal']);
+    rows.push(['Month', months[Number(month)-1] + ' ' + year]);
+    rows.push([]);
+    rows.push(['Date','Day','Type','In Time','Out Time','Worked','Regular','Daily OT']);
+    let total = 0, regularTotal = 0, otTotal = 0;
+
+    Object.keys(rs).sort().forEach(date => {
+      let r = rs[date];
+      let day = new Date(date + 'T12:00:00').getDay();
+      let type = holidayName(date) ? 'Holiday' : (r.type || defaultType(date, day));
+      let worked = getWorkedHours(r.in, r.out);
+      let regular = 0, ot = 0;
+      let duty = num('dailyHours');
+      if(type === 'Normal'){
+        regular = Math.min(worked, duty);
+        ot = Math.max(0, worked - duty);
+      }else if(type === 'Sunday' || type === 'Holiday'){
+        ot = worked;
+      }
+      total += worked;
+      regularTotal += regular;
+      otTotal += ot;
+      rows.push([
+        date,
+        ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][day],
+        type, r.in || '', r.out || '',
+        fmtTime(worked), fmtTime(regular), fmtTime(ot)
+      ]);
+    });
+
+    rows.push([]);
+    rows.push(['Total Worked', fmtTime(total)]);
+    rows.push(['Total Regular', fmtTime(regularTotal)]);
+    rows.push(['Daily Attendance OT', fmtTime(otTotal)]);
+    rows.push([]);
+    rows.push(['SALARY SUMMARY']);
+    $('summary').innerText.split('\n').forEach(line => {
+      let t = line.trim();
+      if(t) rows.push([t]);
+    });
+
+    function escapeCSV(value){
+      return '"' + String(value ?? '').replace(/"/g, '""') + '"';
+    }
+    let csv = '\uFEFF' + rows.map(row => row.map(escapeCSV).join(',')).join('\r\n');
+    let blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    let url = URL.createObjectURL(blob);
+    let filename = `BIVAS_SALARY_${key}.csv`;
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    $('downloadLink').href = url;
+    $('downloadLink').download = filename;
+    $('downloadFallback').classList.remove('hidden');
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }catch(e){
+    alert('Excel Download সমস্যা: ' + e.message);
+    console.error(e);
+  }
+}
+
+/* ===== FIXED BACKUP & RESTORE + AUTOMATIC BACKUP ===== */
+function buildBackupPayload(){
+  saveCurrentMonth();
+  return {
+    app: 'BIVAS SALARY MANAGER',
+    version: 2,
+    createdAt: new Date().toISOString(),
+    records: records,
+    holidays: holidays,
+    monthSettings: monthSettings,
+    currentSettings: settingsObject(),
+    profile: profile,
+    passwordHash: localStorage.getItem('bivas-time-password') || null,
+    reminderCfg: reminderCfg,
+    autoBackupCfg: autoBackupCfg
+  };
 }
 
 function backup(){
- saveCurrentMonth();
- let data={
-  version:1,
-  created:new Date().toISOString(),
-  records,holidays,monthSettings,profile,
-  currentSettings:settingsObject(),
-  password:localStorage.getItem('bivas-time-password')
- };
- let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
- let url=URL.createObjectURL(blob);
- let a=document.createElement('a');
- a.href=url;a.download='BIVAS_SALARY_BACKUP.json';
- document.body.appendChild(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),60000);
-}
-function restore(event){
- let file=event.target.files[0];if(!file)return;
- let reader=new FileReader();
- reader.onload=()=>{
   try{
-   let d=JSON.parse(reader.result);
-   if(!d.records)throw Error('Invalid backup');
-   if(!confirm('বর্তমান ডেটার সঙ্গে Backup Restore করবেন?'))return;
-   records=d.records||{};
-   holidays=d.holidays||[];
-   monthSettings=d.monthSettings||{};
-   profile=d.profile||{};
-   localStorage.setItem('bivas-records',JSON.stringify(records));
-   localStorage.setItem('bivas-holidays',JSON.stringify(holidays));
-   localStorage.setItem('bivas-month-settings',JSON.stringify(monthSettings));
-   localStorage.setItem('bivas-profile',JSON.stringify(profile));
-   if(d.currentSettings)localStorage.setItem('bivas-current-settings',JSON.stringify(d.currentSettings));
-   if(d.password)localStorage.setItem('bivas-time-password',d.password);
-   alert('Backup Restore হয়েছে।');
-   location.reload();
-  }catch(e){alert('Backup ফাইল সঠিক নয়।');}
-  finally{event.target.value='';}
- };
- reader.readAsText(file);
+    const data = buildBackupPayload();
+    const jsonStr = JSON.stringify(data, null, 2);
+    const filename = `BIVAS_SALARY_BACKUP_${todayStr()}.json`;
+    const blob = new Blob([jsonStr], {type:'application/json;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    $('backupDownloadLink').href = url;
+    $('backupDownloadLink').download = filename;
+    $('backupFallback').classList.remove('hidden');
+
+    autoBackupCfg.lastManual = Date.now();
+    localStorage.setItem('bivas-auto-backup-cfg', JSON.stringify(autoBackupCfg));
+    updateLastBackupBadge();
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  }catch(e){
+    alert('Backup তৈরিতে সমস্যা হয়েছে: ' + e.message);
+  }
 }
 
-function autoBackup(){
- saveCurrentMonth();
- let d={
-  records,holidays,monthSettings,profile,
-  savedAt:new Date().toISOString()
- };
- try{
-  localStorage.setItem('bivas-auto-backup',JSON.stringify(d));
-  $('autoBackupStatus').textContent='Local Automatic Backup: '+new Date().toLocaleString();
-  alert('Local Backup তৈরি হয়েছে।');
- }catch(e){alert('Storage পূর্ণ। Manual Backup Download করুন।');}
-}
-function loadAutoBackup(){
- let d=localStorage.getItem('bivas-auto-backup');
- $('autoBackupStatus').textContent=d?'Local Backup উপলব্ধ':'এখনও Local Backup নেই';
-}
-
-function salarySlip(){
- saveCurrentMonth();calculate();
- let p=profile,r=window.salaryResult||{};
- let html=`<html><head><meta charset="UTF-8"><title>Salary Slip</title>
- <style>body{font-family:Arial;padding:25px}table{width:100%;border-collapse:collapse}
- td,th{border:1px solid #aaa;padding:9px;text-align:left}
- h2{text-align:center}</style></head><body>
- <h2>BIVAS SALARY MANAGER</h2>
- <h3>Salary Slip — ${months[+$('month').value]} ${$('year').value}</h3>
- <p>Employee: ${escapeHTML(p.employeeName||'')}</p>
- <p>Employee ID: ${escapeHTML(p.employeeId||'')}</p>
- <p>Designation: ${escapeHTML(p.designation||'')}</p>
- <table>
- <tr><td>Basic Salary</td><td>₹${num('salary').toFixed(2)}</td></tr>
- <tr><td>EPF</td><td>₹${num('epf').toFixed(2)}</td></tr>
- <tr><td>Mediclaim</td><td>₹${num('mediclaim').toFixed(2)}</td></tr>
- <tr><td>Professional Tax</td><td>₹${num('ptax').toFixed(2)}</td></tr>
- <tr><td>Shortfall Deduction</td><td>₹${r.deduction.toFixed(2)}</td></tr>
- <tr><td>1st Payment</td><td>₹${r.first.toFixed(2)}</td></tr>
- <tr><td>2nd Payment</td><td>₹${r.second.toFixed(2)}</td></tr>
- <tr><th>Total Salary</th><th>₹${r.totalSalary.toFixed(2)}</th></tr>
- </table><p>Worked: ${fmtTime(r.total)} | OT: ${fmtTime(r.summaryOT)}</p>
- <script>window.onload=()=>window.print();<\/script>
- </body></html>`;
- let w=window.open('','_blank');
- if(!w){alert('Pop-up অনুমতি দিন');return;}
- w.document.write(html);w.document.close();
-}
-function escapeHTML(s){
- return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function shareBackup(){
+  try{
+    const data = buildBackupPayload();
+    const jsonStr = JSON.stringify(data, null, 2);
+    const filename = `BIVAS_SALARY_BACKUP_${todayStr()}.json`;
+    const file = new File([jsonStr], filename, {type:'application/json'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        title: 'Bivas Salary Manager Backup',
+        text: 'Backup file for Bivas Salary Manager',
+        files: [file]
+      });
+      autoBackupCfg.lastManual = Date.now();
+      localStorage.setItem('bivas-auto-backup-cfg', JSON.stringify(autoBackupCfg));
+      updateLastBackupBadge();
+    }else if(navigator.share){
+      await navigator.share({ title: filename, text: jsonStr });
+    }else{
+      alert('এই ব্রাউজারে Share সাপোর্ট নেই। "Backup Download" বা "Backup Copy" ব্যবহার করুন।');
+    }
+  }catch(e){
+    if(e.name !== 'AbortError') alert('Share ব্যর্থ হয়েছে: ' + e.message);
+  }
 }
 
-function exportExcel(){
- saveCurrentMonth();calculate();
- let rs=records[displayedMonthKey]||{};
- let rows=[['BIVAS SALARY MANAGER'],['Month',months[+$('month').value],$('year').value],
- ['Date','Day','Type','In','Out','Worked','Regular','OT']];
- let total=0,reg=0,ot=0;
- Object.keys(rs).sort().forEach(date=>{
-  let r=rs[date],day=new Date(date+'T12:00:00').getDay();
-  let type=holidayName(date)?'Holiday':(r.type||defaultType(date,day));
-  let h=getWorkedHours(r.in,r.out),a=0,b=0;
-  if(type==='Normal'){a=Math.min(h,num('dailyHours'));b=Math.max(0,h-num('dailyHours'));}
-  else if(type==='Sunday'||type==='Holiday')b=h;
-  total+=h;reg+=a;ot+=b;
-  rows.push([date,['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][day],
-   type,r.in||'',r.out||'',fmtTime(h),fmtTime(a),fmtTime(b)]);
- });
- rows.push(['Total Worked',fmtTime(total)],['Regular',fmtTime(reg)],['OT',fmtTime(ot)]);
- let csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
- let blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
- let url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download=`BIVAS_SALARY_${displayedMonthKey}.csv`;
- document.body.appendChild(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),60000);
+async function copyBackupText(){
+  try{
+    const jsonStr = JSON.stringify(buildBackupPayload());
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(jsonStr);
+      alert('সমস্ত Backup ডেটা Clipboard-এ Copy হয়েছে! এখন WhatsApp বা Notes-এ সেভ করে রাখতে পারেন।');
+    }else{
+      $('pasteRestoreBox').value = jsonStr;
+      $('pasteRestoreBox').select();
+      document.execCommand('copy');
+      alert('Backup ডেটা Copy হয়েছে!');
+    }
+  }catch(e){
+    alert('Copy করা যায়নি: ' + e.message);
+  }
 }
- </script>
-<script>
+
+function applyRestoredData(data){
+  if(!data || typeof data !== 'object' || !data.records){
+    throw new Error('Invalid backup format');
+  }
+  records = data.records || {};
+  holidays = data.holidays || [];
+  monthSettings = data.monthSettings || {};
+  localStorage.setItem('bivas-records', JSON.stringify(records));
+  localStorage.setItem('bivas-holidays', JSON.stringify(holidays));
+  localStorage.setItem('bivas-month-settings', JSON.stringify(monthSettings));
+  if(data.currentSettings){
+    localStorage.setItem('bivas-current-settings', JSON.stringify(data.currentSettings));
+  }
+  if(data.profile){
+    localStorage.setItem('bivas-profile', JSON.stringify(data.profile));
+  }
+  if(data.passwordHash){
+    localStorage.setItem('bivas-time-password', data.passwordHash);
+  }
+  if(data.reminderCfg){
+    localStorage.setItem('bivas-reminder-cfg', JSON.stringify(data.reminderCfg));
+  }
+  alert('Backup সফলভাবে Restore হয়েছে! অ্যাপ রিলোড হচ্ছে।');
+  location.reload();
+}
+
+function restore(event){
+  let file = event.target.files[0];
+  if(!file) return;
+  let reader = new FileReader();
+  reader.onload = function(){
+    try{
+      let data = JSON.parse(reader.result);
+      applyRestoredData(data);
+    }catch(e){
+      alert('Backup File সঠিক নয়। দয়া করে সঠিক .json ফাইল দিন।');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function restoreFromText(){
+  const raw = $('pasteRestoreBox').value.trim();
+  if(!raw){
+    alert('প্রথমে Backup JSON টেক্সট Paste করুন।');
+    return;
+  }
+  try{
+    const data = JSON.parse(raw);
+    applyRestoredData(data);
+  }catch(e){
+    alert('Paste করা টেক্সট সঠিক JSON Backup নয়।');
+  }
+}
+
+/* AUTOMATIC BACKUP SNAPSHOTS */
+function saveAutoBackupSettings(){
+  autoBackupCfg.enabled = $('autoBackupEnabled').checked;
+  autoBackupCfg.freq = $('autoBackupFreq').value;
+  localStorage.setItem('bivas-auto-backup-cfg', JSON.stringify(autoBackupCfg));
+}
+function checkScheduledAutoBackup(){
+  if(!autoBackupCfg.enabled) return;
+  const now = Date.now();
+  const gap = now - (autoBackupCfg.lastAuto || 0);
+  if(autoBackupCfg.freq === 'daily' && gap > 86400000){
+    runAutoBackup(false);
+  }else if(autoBackupCfg.freq === 'weekly' && gap > 7 * 86400000){
+    runAutoBackup(false);
+  }
+}
+function runAutoBackup(showAlert){
+  try{
+    const snap = {
+      id: Date.now(),
+      time: Date.now(),
+      data: buildBackupPayload()
+    };
+    autoBackups.unshift(snap);
+    if(autoBackups.length > 5) autoBackups = autoBackups.slice(0, 5);
+    localStorage.setItem('bivas-auto-backups', JSON.stringify(autoBackups));
+    autoBackupCfg.lastAuto = snap.time;
+    localStorage.setItem('bivas-auto-backup-cfg', JSON.stringify(autoBackupCfg));
+    renderAutoBackupList();
+    updateLastBackupBadge();
+    if(showAlert) alert('অটো ব্যাকআপ স্ন্যাপশট সংরক্ষিত হয়েছে।');
+  }catch(e){
+    if(showAlert) alert('অটো ব্যাকআপ সংরক্ষণে সমস্যা (স্টোরেজ পূর্ণ হতে পারে)।');
+  }
+}
+function renderAutoBackupList(){
+  $('autoBackupEnabled').checked = !!autoBackupCfg.enabled;
+  $('autoBackupFreq').value = autoBackupCfg.freq || 'on_save';
+  $('autoBackupCount').textContent = `${autoBackups.length} স্ন্যাপশট`;
+  const box = $('autoBackupList');
+  if(!autoBackups.length){
+    box.innerHTML = '<div class="muted">এখনও কোনো অটো ব্যাকআপ নেই।</div>';
+    return;
+  }
+  box.innerHTML = autoBackups.map((s, idx) => `
+    <div class="snap-item">
+      <div>
+        <b>স্ন্যাপশট #${idx+1}</b><br>
+        <span class="muted">${fmtDateTime(s.time)}</span>
+      </div>
+      <div>
+        <button class="sm success" onclick="restoreAutoSnapshot(${idx})">Restore</button>
+        <button class="sm secondary" onclick="downloadAutoSnapshot(${idx})">Download</button>
+      </div>
+    </div>
+  `).join('');
+}
+function restoreAutoSnapshot(idx){
+  if(!autoBackups[idx]) return;
+  if(!confirm('এই অটো ব্যাকআপ স্ন্যাপশটটি Restore করতে চান?')) return;
+  applyRestoredData(autoBackups[idx].data);
+}
+function downloadAutoSnapshot(idx){
+  if(!autoBackups[idx]) return;
+  const blob = new Blob([JSON.stringify(autoBackups[idx].data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `BIVAS_AUTO_BACKUP_${idx+1}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+function updateLastBackupBadge(){
+  const latest = Math.max(autoBackupCfg.lastManual || 0, autoBackupCfg.lastAuto || 0);
+  $('lastBackupBadge').textContent = latest ? `শেষ ব্যাকআপ: ${fmtDateTime(latest)}` : 'এখনও Backup হয়নি';
+}
+
+/* ===== SALARY HISTORY ===== */
 function showHistory(){
- let y=Number($('historyYear').value),m=Number($('historyMonth').value);
- let key=`${y}-${String(m+1).padStart(2,'0')}`;
- let rs=records[key]||{},cfg=monthSettings[key]||{};
- let duty=Number(cfg.dailyHours)||0,total=0,ot=0,days=0;
- Object.entries(rs).forEach(([date,r])=>{
-  let day=new Date(date+'T12:00:00').getDay();
-  let type=holidayName(date)?'Holiday':(r.type||defaultType(date,day));
-  let h=getWorkedHours(r.in,r.out);
-  if(type==='Normal'){days++;ot+=Math.max(0,h-duty);}
-  else if(type==='Sunday'||type==='Holiday')ot+=h;
-  total+=h;
- });
- $('historyResult').textContent=
- `${months[m]} ${y} | Worked: ${fmtTime(total)} | Required: ${fmtTime(days*duty)} | OT: ${fmtTime(ot)} | Basic Salary: ₹${cfg.salary||0}`;
+  let y = Number($('historyYear').value);
+  let m = Number($('historyMonth').value);
+  let key = `${y}-${String(m+1).padStart(2,'0')}`;
+  const res = computeMonthMetrics(key, false);
+
+  $('historyResult').innerHTML = `
+    <div class="stat">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <b>${months[m]} ${y}</b>
+        <div>
+          <button class="sm" onclick="jumpToMonth(${y},${m})">Open করুন</button>
+          <button class="sm success" onclick="openSalarySlip('${key}')">Salary Slip PDF</button>
+        </div>
+      </div>
+      <div class="muted" style="margin-top:6px">
+        Basic: ₹${res.salary.toFixed(2)} | Worked: ${fmtTime(res.total)} | Required: ${fmtTime(res.required)} | Daily OT: ${fmtTime(res.dailyOT)}<br>
+        1st Payment: <b>₹${res.first.toFixed(2)}</b> | 2nd Payment: <b>₹${res.second.toFixed(2)}</b> |
+        Total Salary: <b class="good">₹${res.totalSalary.toFixed(2)}</b>
+      </div>
+    </div>
+  `;
 }
 
-function updateDashboard(){
- if(!window.salaryResult)return;
- let r=window.salaryResult;
- let data=[
- ['Employee',profile.employeeName||'Not Set'],
- ['Total Worked',fmtTime(r.total)],
- ['Required Hours',fmtTime(r.required)],
- ['Total OT',fmtTime(r.summaryOT)],
- ['1st Payment',`₹${r.first.toFixed(2)}`],
- ['2nd Payment',`₹${r.second.toFixed(2)}`],
- ['Total Salary',`₹${r.totalSalary.toFixed(2)}`]
- ];
- $('dashboardStats').innerHTML=data.map(([a,b])=>
- `<div class="stat"><label>${escapeHTML(a)}</label><b>${escapeHTML(b)}</b></div>`).join('');
+function jumpToMonth(y, m){
+  $('year').value = y;
+  $('month').value = m;
+  saveCurrentMonth();
+  renderMonth();
+  switchTab('attendance');
 }
 
-function enableNotifications(){
- if(!('Notification' in window)){
-  alert('এই Browser Notification সমর্থন করে না।');return;
- }
- Notification.requestPermission().then(p=>{
-  alert(p==='granted'?'Notification চালু হয়েছে।':'Notification অনুমতি দেওয়া হয়নি।');
- });
-}
-function scheduleReminder(){
- let time=prompt('Reminder সময় দিন (24-hour HH:MM), যেমন 20:00');
- if(!time||!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){
-  alert('সঠিক সময় লিখুন।');return;
- }
- localStorage.setItem('bivas-reminder-time',time);
- alert('Reminder সময় Save হয়েছে। Browser খোলা থাকলে Reminder দেখাবে।');
-}
-function checkReminder(){
- let t=localStorage.getItem('bivas-reminder-time');
- if(!t||!('Notification' in window)||Notification.permission!=='granted')return;
- let now=new Date(),current=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
- let today=now.toISOString().slice(0,10);
- if(current===t&&localStorage.getItem('bivas-reminder-last')!==today){
-  new Notification('BIVAS SALARY MANAGER',{body:'আজকের Attendance Entry ও ডেটা Save করুন।'});
-  localStorage.setItem('bivas-reminder-last',today);
- }
-}
-function go(id){
- $(id).scrollIntoView({behavior:'smooth',block:'start'});
+function renderAllHistory(){
+  saveCurrentMonth();
+  const keysSet = new Set([...Object.keys(records), ...Object.keys(monthSettings)]);
+  const keys = Array.from(keysSet).filter(k => /^\d{4}-\d{2}$/.test(k)).sort().reverse();
+  $('historyCountBadge').textContent = `${keys.length} মাস`;
+
+  const tb = $('historyTableBody');
+  if(!keys.length){
+    tb.innerHTML = '<tr><td colspan="9" class="muted">কোনো মাসের ডেটা পাওয়া যায়নি।</td></tr>';
+    $('historyYearTotals').innerHTML = '';
+    return;
+  }
+
+  let grandSalary = 0, grandWorked = 0, grandOT = 0;
+  tb.innerHTML = keys.map(k => {
+    const [yr, mo] = k.split('-');
+    const res = computeMonthMetrics(k, false);
+    grandSalary += res.totalSalary;
+    grandWorked += res.total;
+    grandOT += res.dailyOT;
+    return `
+      <tr>
+        <td><b>${months[Number(mo)-1]} ${yr}</b></td>
+        <td>₹${res.salary.toFixed(0)}</td>
+        <td>${fmtTime(res.total)}</td>
+        <td>${fmtTime(res.required)}</td>
+        <td>${fmtTime(res.dailyOT)}</td>
+        <td>₹${res.first.toFixed(2)}</td>
+        <td>₹${res.second.toFixed(2)}</td>
+        <td class="good"><b>₹${res.totalSalary.toFixed(2)}</b></td>
+        <td>
+          <button class="sm secondary" onclick="jumpToMonth(${Number(yr)},${Number(mo)-1})">Open</button>
+          <button class="sm success" onclick="openSalarySlip('${k}')">Slip</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  $('historyYearTotals').innerHTML = `
+    <div class="stat"><label>সর্বমোট উপার্জন</label><b class="good">₹${grandSalary.toFixed(2)}</b></div>
+    <div class="stat"><label>সর্বমোট Worked</label><b>${fmtTime(grandWorked)}</b></div>
+    <div class="stat"><label>সর্বমোট Daily OT</label><b>${fmtTime(grandOT)}</b></div>
+  `;
 }
 
-$('year').addEventListener('change',()=>{saveCurrentMonth();renderMonth();});
-$('month').addEventListener('change',()=>{saveCurrentMonth();renderMonth();});
+/* ===== NOTIFICATION & REMINDER ===== */
+function renderReminderUI(){
+  $('remEnabled').checked = !!reminderCfg.enabled;
+  $('remInTime').value = reminderCfg.inTime || '09:00';
+  $('remOutTime').value = reminderCfg.outTime || '18:30';
+  $('remBackupEnabled').checked = !!reminderCfg.backupReminder;
+  updateNotifBadge();
+}
+function saveReminderSettings(){
+  reminderCfg.enabled = $('remEnabled').checked;
+  reminderCfg.inTime = $('remInTime').value || '09:00';
+  reminderCfg.outTime = $('remOutTime').value || '18:30';
+  reminderCfg.backupReminder = $('remBackupEnabled').checked;
+  localStorage.setItem('bivas-reminder-cfg', JSON.stringify(reminderCfg));
+}
+function updateNotifBadge(){
+  const el = $('notifPermBadge');
+  if(!('Notification' in window)){
+    el.textContent = 'In-App মোড';
+    el.className = 'badge amber';
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    el.textContent = 'চালু আছে';
+    el.className = 'badge green';
+  }else if(Notification.permission === 'denied'){
+    el.textContent = 'ব্লক করা (In-App চালু)';
+    el.className = 'badge red';
+  }else{
+    el.textContent = 'অনুমতি বাকি';
+    el.className = 'badge amber';
+  }
+}
+function requestNotifPermission(){
+  if(!('Notification' in window)){
+    alert('এই ব্রাউজারে সিস্টেম নোটিফিকেশন সাপোর্ট নেই, তবে ইন-অ্যাপ রিমাইন্ডার ব্যানার কাজ করবে।');
+    return;
+  }
+  Notification.requestPermission().then(() => {
+    updateNotifBadge();
+    if(Notification.permission === 'granted'){
+      triggerAlert('BIVAS SALARY MANAGER', 'Notification সফলভাবে চালু হয়েছে!');
+    }
+  });
+}
+function sendTestNotification(){
+  triggerAlert('BIVAS SALARY MANAGER', 'এটি একটি টেস্ট রিমাইন্ডার! আপনার Attendance ও Backup নিয়মিত আপডেট রাখুন।');
+}
+function showBanner(msg){
+  $('reminderBannerText').textContent = msg;
+  $('reminderBanner').classList.remove('hidden');
+}
+function dismissBanner(){
+  $('reminderBanner').classList.add('hidden');
+}
+function triggerAlert(title, body){
+  showBanner(`${title}: ${body}`);
+  if(navigator.vibrate) navigator.vibrate([150, 80, 150]);
+  if('Notification' in window && Notification.permission === 'granted'){
+    try{ new Notification(title, { body }); }catch(e){}
+  }
+}
 
-SET_KEYS.forEach(k=>{
- $(k).addEventListener('input',()=>{saveSettings();calculate();});
- $(k).addEventListener('change',()=>{saveSettings();calculate();});
+function checkReminders(){
+  const now = new Date();
+  const hhmm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const today = todayStr();
+  const curMonth = today.slice(0, 7);
+  const todayRec = (records[curMonth] || {})[today] || {};
+
+  if(reminderCfg.enabled){
+    if(hhmm >= reminderCfg.inTime && !todayRec.in && !firedReminders['in_' + today]){
+      firedReminders['in_' + today] = true;
+      triggerAlert('In-Time Reminder', 'আজকের In Time এখনও দেওয়া হয়নি। Attendance-এ গিয়ে এন্ট্রি করুন।');
+    }
+    if(hhmm >= reminderCfg.outTime && todayRec.in && !todayRec.out && !firedReminders['out_' + today]){
+      firedReminders['out_' + today] = true;
+      triggerAlert('Out-Time Reminder', 'আজকের Out Time দিতে ভুলবেন না!');
+    }
+  }
+
+  if(reminderCfg.backupReminder && !firedReminders['bk_' + today]){
+    const lastMan = autoBackupCfg.lastManual || 0;
+    if(!lastMan || (Date.now() - lastMan) > 7 * 86400000){
+      firedReminders['bk_' + today] = true;
+      showBanner('Backup Reminder: ৭ দিনের বেশি Manual Backup নেওয়া হয়নি। Menu থেকে Backup & Reminder-এ গিয়ে একটি কপি ডাউনলোড করে রাখুন।');
+    }
+  }
+}
+
+/* ===== EVENT LISTENERS ===== */
+$('year').addEventListener('change', function(){
+  saveCurrentMonth();
+  renderMonth();
+});
+$('month').addEventListener('change', function(){
+  saveCurrentMonth();
+  renderMonth();
+});
+SET_KEYS.forEach(k => {
+  $(k).addEventListener('input', () => {
+    saveSettings();
+    calculate();
+  });
+  $(k).addEventListener('change', () => {
+    saveSettings();
+    calculate();
+  });
 });
 
+/* ===== APPLICATION START ===== */
 function init(){
- loadData();
- let now=new Date();
- $('year').value=now.getFullYear();
- $('month').value=now.getMonth();
- $('historyYear').value=now.getFullYear();
- $('historyMonth').value=now.getMonth();
+  loadData();
+  let now = new Date();
+  $('year').value = now.getFullYear();
+  $('month').value = now.getMonth();
+  $('historyYear').value = now.getFullYear();
+  $('historyMonth').value = now.getMonth();
 
- let key=monthKey();
- if(monthSettings[key])applyMonthSettings(key);
- else{
-  let old=JSON.parse(localStorage.getItem('bivas-current-settings')||'null');
-  if(old)Object.entries(old).forEach(([k,v])=>{if($(k))$(k).value=v;});
-  monthSettings[key]=settingsObject();
- }
- renderHolidayList();
- renderMonth();
- calculate();
- loadAutoBackup();
- // Local backup snapshot on app start and periodically.
- autoBackup();
+  let key = monthKey();
+  if(monthSettings[key]){
+    applyMonthSettings(key);
+  }else{
+    let saved = JSON.parse(localStorage.getItem('bivas-current-settings') || 'null');
+    if(saved){
+      Object.entries(saved).forEach(([id, value]) => {
+        if($(id)) $(id).value = value;
+      });
+    }
+    monthSettings[key] = settingsObject();
+  }
+
+  renderProfileUI();
+  renderHolidayList();
+  renderMonth();
+  calculate();
+  renderAutoBackupList();
+  updateLastBackupBadge();
+  renderReminderUI();
+  checkScheduledAutoBackup();
+  setTimeout(checkReminders, 1200);
+  setInterval(checkReminders, 60000);
 }
+
 init();
-
-// Reminder check while the app remains open.
-setInterval(checkReminder,30000);
-window.addEventListener('beforeunload',()=>{
- try{saveCurrentMonth();}catch(e){}
-});
 </script>
-
-</main>
 </body>
 </html>
- 
+
+   
+
+
  
